@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>World View</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="../static/main.css">
+</head>
+<body>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.mapbox.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/css/font-awesome.min.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+<div id='map'></div>
+<script>
+
+
+    L.mapbox.accessToken = 'pk.eyJ1Ijoic3VwZXJ0b25pZWZ5IiwiYSI6ImNqZGh5cDhwdzBmMHIycHNhcTd4b3p3ZHkifQ.E-jU9X_2jy_dj7qrxr_gjA';
+
+    var map = L.mapbox.map('map', 'mapbox.streets');
+    L.control.locate().addTo(map);
+
+    var RADIUS = 5000 ;
+    var filterCircle = L.circle(L.latLng(40, -75), RADIUS, {
+        opacity: 1,
+        weight: 1,
+        fillOpacity: 0.4
+    }).addTo(map);
+
+    //create a layer which will parse and display the users/location
+
+    map.on('dblclick', function(e) {
+        filterCircle.setLatLng(e.latlng);
+        csvLayer.setFilter(function showAirport(feature) {
+            return e.latlng.distanceTo(L.latLng(
+                    feature.geometry.coordinates[1],
+                    feature.geometry.coordinates[0])) < RADIUS;
+        });
+    });
+
+
+</script>
+</body>
+</html>
