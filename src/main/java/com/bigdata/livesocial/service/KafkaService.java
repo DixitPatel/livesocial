@@ -1,23 +1,19 @@
-package com.example.webapp.livesocial.service;
+/*
+package com.bigdata.livesocial.service;
 
 import java.lang.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.apache.kafka.*;
-import akka.kafka.javadsl.Consumer;
-import akka.kafka.javadsl.Producer;
-import akka.kafka.ConsumerSettings;
-import akka.kafka.ProducerSettings;
-import akka.kafka.Subscriptions;
-import akka.kafka.Subscriptions;
-import akka.stream.javadsl.Sink;
-import akka.stream.javadsl.Source;
+
 import org.apache.kafka.common.serialization.*;
 
+*/
 /**
  * @author yuvrajarora
- */
+ *//*
+
 @Service
 public class KafkaService {
 
@@ -37,3 +33,4 @@ public class KafkaService {
         kafkaTemplate.send(kafkaTopic, data);
     }
 }
+*/
