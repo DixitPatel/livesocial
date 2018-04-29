@@ -28,7 +28,7 @@
                 <textarea name="field3" id="details1" placeholder="Type details"></textarea>
                 <br/>
                 <br/>
-                <input type="submit" onclick="submit()" href="javascript:;" />
+                <input type="submit" onclick="sendEventDetails()" href="javascript:;" />
             </form>
         </div>
     </div>
@@ -65,12 +65,33 @@
 
 
         map.addControl(geolocate);
-
+        function sendEventDetails() {
+            stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'name': $("#name1").val() }));
+        }
+        function showGreeting(message){
+            var parsed = JSON.parse(message);
+            var popup = new mapboxgl.Popup({ closeOnClick: false })
+                .setLngLat([parsed[0].lng, parsed[1].lat])
+                .setHTML('<h1>Hello</h1>')
+                .addTo(map);
+        }
+        function connect() {
+            var socket = new SockJS('/livesocial-sock');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/user', function (greeting) {
+                    showGreeting((greeting.body));
+                });
+            });
+        }
         geolocate.on('geolocate', (e) => {
             console.log(e)
             coordinates2 = e.coords.longitude
             coordinates1 = e.coords.latitude
             console.log(coordinates1)
+            connect();
             map.on('dblclick', function (e1) {
                 var el = document.createElement('div');
                 el.className = 'marker';
@@ -82,6 +103,7 @@
 
             });
         });
+
         function submit() {
             var name = document.getElementById('name1');
             var mail = document.getElementById('email1');
