@@ -21,7 +21,7 @@ public class UserConsumer {
     public CountDownLatch getLatch() {
         return latch;
     }
-    @KafkaListener(topics = "${kafka.topic.user}")
+    //@KafkaListener(topics = "${kafka.topic.user}")
     public void listen(@Payload String message) {
         //Send to web client
         //TODO

@@ -36,7 +36,7 @@ public class TestKafka {
         Coordinate c =new Coordinate();
         c.setX(10);
         c.setY(10);
-        producer.sendToKafka(c);
+        //producer.sendToKafka(c);
         consumer.getLatch().await(10, TimeUnit.SECONDS);
         assertThat(consumer.getLatch().getCount()).isEqualTo(0);
     }

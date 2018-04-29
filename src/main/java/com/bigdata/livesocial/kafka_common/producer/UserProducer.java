@@ -23,8 +23,8 @@ public class UserProducer {
     @Value("${kafka.topic.user}")
     private String topic;
 
-    public void sendToKafka(Coordinate userC){
-        LOG.info("sending message='{}' to topic='{}'", userC, topic);
-        kafkaTemplate.send(topic,"Test", "Val");
+    public void sendToKafka(String message){
+        LOG.info("sending message='{}' to topic='{}'", message, topic);
+        kafkaTemplate.send(topic, "Val");
     }
 }
