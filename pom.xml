@@ -49,11 +49,19 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>de.grundid.opendatalab</groupId>
+			<artifactId>geojson-jackson</artifactId>
+			<version>1.8</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-cassandra</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -86,7 +94,27 @@
 			<artifactId>jquery</artifactId>
 			<version>3.1.0</version>
 		</dependency>
-	</dependencies>
+		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple.wso2/json-simple -->
+        <!-- https://mvnrepository.com/artifact/org.geotools/gt-geojson -->
+
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+        </dependency>
+
+
+
+
+
+    </dependencies>
 
 	<build>
 		<plugins>

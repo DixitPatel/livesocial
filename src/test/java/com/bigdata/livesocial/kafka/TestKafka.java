@@ -1,7 +1,7 @@
 package com.bigdata.livesocial.kafka;
 
 import com.bigdata.livesocial.kafka_common.consumer.UserConsumer;
-import com.bigdata.livesocial.kafka_common.model.Coordinate;
+import com.bigdata.livesocial.model.Coordinate;
 import com.bigdata.livesocial.kafka_common.producer.UserProducer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
