@@ -1,0 +1,30 @@
+Starting Kafka and Cassandra
+
+First start zookeeper using this command in port 2181
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+Then start Kafka using this command in port 9092
+bin/kafka-server-start.sh config/server.properties
+
+Run producer code using this command
+
+bin/kafka-avro-console-producer \
+    --broker-list localhost:9092 --topic orders-topic 
+
+
+Cassandra installation
+Start Cassandra
+sudo sh ~/cassandra/bin/cassandra
+
+Kafka and cassandra sink API in confluent 4.0 used for integration
+
+For integration, start the connect in confluent
+
+bin/connect-distributed etc/schema-registry/connect-avro-distributed.properties
+
+After doing this run the kafka connect jar file using this command
+
+java -jar kafka-connect-cli-0.5-all.jar create cassandra-sink-orders < cassandra-sink-distributed-orders.properties
+
+This will start the data mountaineer class and we can run topics that we want to test
+
