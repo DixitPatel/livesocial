@@ -24,7 +24,9 @@
         <div id="form-style-6" class="form-style-6">
             <h1>Welcome to Live Social - Create Event</h1>
             <form class="form">
-                <input type="text" id="name1" name="field1" placeholder="Enter Name" />
+                <input type="text" id="name1" name="field1" placeholder="Enter User Name" />
+                <br/>
+                <input type="text" id="name2" name="field2" placeholder="Enter Event Name" />
                 <br/>
                 <label for="field2">Start Time</label> <br/>
                 <input type="time" id="starttime1" name="field2" />
@@ -41,7 +43,7 @@
                 <label for="vote">No</label>
                 <input type="radio" name = "vote" id="radio2" value="No">
                 <br/><br/>
-                <input id="sub1" type="submit"  href="javascript:;" />
+                <input id="sub1" type="submit" />
             </form>
         </div>
     </div>
@@ -163,6 +165,7 @@
             coordinates1 = e.coords.latitude
             console.log(coordinates1)
             console.log(coordinates2)
+            console.log(guid())
             connect();
             map.on('contextmenu', function (e1) {
                 var el = document.createElement('div');
@@ -171,18 +174,30 @@
                     .setLngLat(e1.lngLat)
                     .addTo(map);
                 ee1 = e1.lngLat
-                //e1_lng = e1.coords.longitude
+                // var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
+                // var mapDiv = document.getElementById('map');
+                // mapDiv.style.height = '50%';
+                // mapCanvas.style.height = '50%';
+                // //mapCanvas.style.top='100em';
+                // map.resize();
+                //document.getElementById('form-style-6').style.top = '50em';
                 document.getElementById("form-style-6").style.display = "block";
+                
                 //document.getElementById("form-style-6").style.visibility = "visible"
 
             });
         });
+
+
+
         function sendEventDetails() {
             stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
-                'event_name': $("#name1").val(),
+                'user_name': $("#name1").val(),
+                'event_name': $("#name2").val(),
+                'event_description': $("#details1").val(),
                 'start_time': $("#starttime1").val(),
                 'end_time': $("#endtime1").val(),
-                'event_description': $("#details1").val(),
+                'vote': document.querySelector('input[name="vote"]:checked').value,
                 'geoJson': {
                     "type": "FeatureCollection",
                     'features': [{
@@ -197,10 +212,6 @@
                     }]
                 }
             }));
-            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({  }));
-            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'end_time': $("#endtime1").val() }));
-            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'event_description': $("#details1").val() }));
-            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'geoJson': "type: FeatureCollection"  }));
         }
             $(function () {
             $("form").on('submit', function (e) {
