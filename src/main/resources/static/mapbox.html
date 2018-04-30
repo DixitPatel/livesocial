@@ -12,23 +12,36 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="../templates/app.js"></script>
 
 </head>
 
 <body>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'/>
+
     <div id='map' class="w3-container">
         <div id="form-style-6" class="form-style-6">
-            <h1>Welcome to Live Social - Update Event</h1>
-            <form action="" method="post">
+            <h1>Welcome to Live Social - Create Event</h1>
+            <form class="form">
                 <input type="text" id="name1" name="field1" placeholder="Your Name" />
                 <br/>
-                <input type="email" id="email1" name="field2" placeholder="Email Address" />
+                <label for="field2">Start Time</label> <br/>
+                <input type="time" id="starttime1" name="field2" />
                 <br/>
-                <textarea name="field3" id="details1" placeholder="Type details"></textarea>
                 <br/>
+                <label for="field3">End Time</label> <br/>
+                <input type="time" id="endtime1" name="field4" placeholder="End Time" />
                 <br/>
-                <input type="submit" onclick="sendEventDetails()" href="javascript:;" />
+                <textarea name="field3" id="details1" placeholder="Enter Event Details"></textarea>
+                <br/>
+                <label for="vote">Allow public voting?</label>
+                <label for="vote">Yes</label>
+                <input type="radio" name = "vote" id="radio1" value="Yes">
+                <label for="vote">No</label>
+                <input type="radio" name = "vote" id="radio2" value="No">
+                <br/><br/>
+                <input id="sub1" type="submit"  href="javascript:;" />
             </form>
         </div>
     </div>
@@ -52,7 +65,65 @@
             center: [-96, 37.8],
             zoom: 2 // starting zoom
         });
+        var draw = new MapboxDraw({
+                displayControlsDefault: false,
+                controls: {
+                    polygon: true,
+                    trash: true
+                }
+            });
+        map.addControl(draw);
+        var popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+        map.on('load', function () {
+                // Add a layer showing the places.
+                map.addLayer({
+                    "id": "places",
+                    "type": "symbol",
+                    "source": {
+                        "type": "geojson",
+                        "data": {
+                            "type": "FeatureCollection",
+                            "features": [{
+                                "type": "Feature",
+                                "properties": {
+                                    "description": "<strong>Avengers</strong><p><a href=\"https://www.cinemark.com/avengers-infinity-war\" target=\"_blank\" title=\"Opens in a new window\">Book Tickets Here!</a> Rated 5-star movie. 12:00-6:00 p.m.</p>",
+                                    "icon": "theatre"
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [-105.2542, 40.0173]
+                                }
+                            }]
+                        }
+                    },
+                    "layout": {
+                    "icon-image": "{icon}-15",
+                    "icon-allow-overlap": true
+                    }
+                });
+                map.on('mouseenter', 'places', function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = e.features[0].properties.description;
 
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                popup.setLngLat(coordinates)
+                    .setHTML(description)
+                    .addTo(map);
+                map.on('mouseleave', 'places', function () {
+                map.getCanvas().style.cursor = '';
+                popup.remove();
+            });
+            });
+            
 
         //create a layer which will parse and display the users/location
 
@@ -71,16 +142,17 @@
         function showGreeting(message){
             var parsed = JSON.parse(message);
             var popup = new mapboxgl.Popup({ closeOnClick: false })
-                .setLngLat([parsed[0].lng, parsed[1].lat])
-                .setHTML('<h1>Hello</h1>')
+                .setLngLat([parsed[0].lat, parsed[1].lng])
+                .setHTML(parsed[2].name)
                 .addTo(map);
+            console.log(parsed)
         }
         function connect() {
             var socket = new SockJS('/livesocial-sock');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
-                setConnected(true);
-                console.log('Connected: ' + frame);
+                //setConnected(true);
+                console.log('Connected1: ' + frame);
                 stompClient.subscribe('/topic/user', function (greeting) {
                     showGreeting((greeting.body));
                 });
@@ -91,8 +163,9 @@
             coordinates2 = e.coords.longitude
             coordinates1 = e.coords.latitude
             console.log(coordinates1)
-            connect();
-            map.on('dblclick', function (e1) {
+            console.log(coordinates2)
+            //connect();
+            map.on('contextmenu', function (e1) {
                 var el = document.createElement('div');
                 el.className = 'marker';
                 new mapboxgl.Marker(el)
@@ -103,23 +176,20 @@
 
             });
         });
-
-        function submit() {
-            var name = document.getElementById('name1');
-            var mail = document.getElementById('email1');
-            var text = document.getElementById('details1');
-            console.log(name)
-        }
-
+        $(function () {
+            $("form").on('submit', function (e) {
+                e.preventDefault();
+            });
+            $( "#sub1" ).click(function() { sendEventDetails(); });
+        });
         map.on('mouseenter', function () {
             map.getCanvas().style.cursor = 'pointer';
         });
         var uuid = guid();
         var event1 = null;
+    })
 
-        var ws = new WebSocket("@wsUrl");
-
-        ws.onmessage = function (event) {
+        /* ws.onmessage = function (event) {
             var data = JSON.parse(event.data);
             if (eventMarkers[data.event1] == null) {
                 var el = document.createElement('i');
@@ -132,12 +202,10 @@
                     // in this function
                 })
             }
-        }
-        window.setInterval(function () {
-            if ((marker != null) && (ws.readyState == 1)) {
-                ws.send(JSON.stringify({ user: uuid, lngLat: [coordinates1, coordinates2] }));
-            }
-        })
+        } */
+
+                //ws.send(JSON.stringify({ user: uuid, lngLat: [coordinates1, coordinates2] }));
+
 
 
 
