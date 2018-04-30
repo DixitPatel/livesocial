@@ -24,7 +24,7 @@
         <div id="form-style-6" class="form-style-6">
             <h1>Welcome to Live Social - Create Event</h1>
             <form class="form">
-                <input type="text" id="name1" name="field1" placeholder="Your Name" />
+                <input type="text" id="name1" name="field1" placeholder="Enter Name" />
                 <br/>
                 <label for="field2">Start Time</label> <br/>
                 <input type="time" id="starttime1" name="field2" />
@@ -136,9 +136,7 @@
 
 
         map.addControl(geolocate);
-        function sendEventDetails() {
-            stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'name': $("#name1").val() }));
-        }
+
         function showGreeting(message){
             var parsed = JSON.parse(message);
             var popup = new mapboxgl.Popup({ closeOnClick: false })
@@ -158,29 +156,57 @@
                 });
             });
         }
+        var ee1 = null;
         geolocate.on('geolocate', (e) => {
             console.log(e)
             coordinates2 = e.coords.longitude
             coordinates1 = e.coords.latitude
             console.log(coordinates1)
             console.log(coordinates2)
-            //connect();
+            connect();
             map.on('contextmenu', function (e1) {
                 var el = document.createElement('div');
                 el.className = 'marker';
                 new mapboxgl.Marker(el)
                     .setLngLat(e1.lngLat)
                     .addTo(map);
+                ee1 = e1.lngLat
+                //e1_lng = e1.coords.longitude
                 document.getElementById("form-style-6").style.display = "block";
-                //document.getElementById("form-style-6").style.visibility = "visible";
+                //document.getElementById("form-style-6").style.visibility = "visible"
 
             });
         });
-        $(function () {
+        function sendEventDetails() {
+            stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+                'event_name': $("#name1").val(),
+                'start_time': $("#starttime1").val(),
+                'end_time': $("#endtime1").val(),
+                'event_description': $("#details1").val(),
+                'geoJson': {
+                    "type": "FeatureCollection",
+                    'features': [{
+                        "type": "Feature",
+                        "properties": {
+                            "description": $("#details1").val()
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [ee1]
+                        }
+                    }]
+                }
+            }));
+            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({  }));
+            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'end_time': $("#endtime1").val() }));
+            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'event_description': $("#details1").val() }));
+            //stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({ 'geoJson': "type: FeatureCollection"  }));
+        }
+            $(function () {
             $("form").on('submit', function (e) {
                 e.preventDefault();
             });
-            $( "#sub1" ).click(function() { sendEventDetails(); });
+            $("#sub1").click(function () { sendEventDetails(); });
         });
         map.on('mouseenter', function () {
             map.getCanvas().style.cursor = 'pointer';
