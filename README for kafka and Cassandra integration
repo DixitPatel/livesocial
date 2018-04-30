@@ -28,3 +28,15 @@ java -jar kafka-connect-cli-0.5-all.jar create cassandra-sink-orders < cassandra
 
 This will start the data mountaineer class and we can run topics that we want to test
 
+##################################################### LIVESOCIAL ######################################################
+
+Start Kafka     :  bin/kafka-server-start.sh config/server.properties
+Start Zookeeper :  bin/zookeeper-server-start.sh config/zookeeper.properties
+Create topic    :  bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic user
+List all topics :  bin/kafka-topics.sh --list --zookeeper localhost:2181
+Start consumer  :  bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic user --from-beginning
+Start producer  :  bin/kafka-console-producer.sh --broker-list localhost:9092 --topic user
+Clean kafka     :  rm -rf /tmp/kafka-logs/*
+Clean zookeeper :  rm -rf /tmp/zookeeper/*
+
+##################################################### LIVESOCIAL ######################################################

@@ -2,6 +2,7 @@ package com.bigdata.livesocial.kafka_common.producer;
 
 import com.bigdata.livesocial.model.Coordinate;
 import com.bigdata.livesocial.model.Event;
+import com.bigdata.livesocial.model.EventDetailsPojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,12 @@ public class UserProducer {
     private static final Logger LOG = LoggerFactory.getLogger(UserProducer.class);
 
     @Autowired
-    private KafkaTemplate<String, Event> kafkaTemplate;
+    private KafkaTemplate<String, EventDetailsPojo> kafkaTemplate;
 
     @Value("${kafka.topic.user}")
     private String topic;
 
-    public void sendToKafka(Event event){
+    public void sendToKafka(EventDetailsPojo event){
         LOG.info("sending message='{}' to topic='{}'", event.toString(), topic);
         kafkaTemplate.send(topic,event );
     }

@@ -2,6 +2,7 @@ package com.bigdata.livesocial.kafka_common.producer;
 
 import com.bigdata.livesocial.model.Coordinate;
 import com.bigdata.livesocial.model.Event;
+import com.bigdata.livesocial.model.EventDetailsPojo;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,12 +39,12 @@ public class  ProducerConfiguration {
     }
 
     @Bean
-    public ProducerFactory<String, Event> producerFactory() {
+    public ProducerFactory<String, EventDetailsPojo> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs(),new StringSerializer(),new JsonSerializer<>());
     }
 
     @Bean
-    public KafkaTemplate<String, Event> kafkaTemplate() {
+    public KafkaTemplate<String, EventDetailsPojo> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

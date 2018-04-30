@@ -1,5 +1,6 @@
 package com.bigdata.livesocial;
 
+import com.bigdata.livesocial.cassandra.CassandraService;
 import com.bigdata.livesocial.cassandra.model.Event;
 import com.bigdata.livesocial.model.Coordinate;
 import com.bigdata.livesocial.kafka_common.producer.UserProducer;
@@ -18,9 +19,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Dixit Patel
@@ -39,76 +37,29 @@ public class KafkaWebSocketController {
 
     @MessageMapping("/publishEvent")
     public void publishEvent(EventDetailsPojo message) throws Exception {
-        LOG.info("Message :  " + message);
-
-        JSONParser parser = new JSONParser();
-        JSONObject eventObject = (JSONObject) parser.parse(message.toString());
-        Event cassandraEvent = new Event();
-        com.bigdata.livesocial.model.Event kafkaEvent = new com.bigdata.livesocial.model.Event();
-
-        cassandraEvent.setName((String) eventObject.get("event_name"));
-        kafkaEvent.setName((String) eventObject.get("event_name"));
-
-        cassandraEvent.setDescription((String) eventObject.get("event_description"));
-        kafkaEvent.setDescription((String) eventObject.get("event_description"));
-
-        JSONObject geoString = (JSONObject) eventObject.get("geoJson");
-
-        JSONArray features = (JSONArray)geoString.get("features");
-        ((JSONObject)features.get(0)).get("geometry");
-        ObjectMapper mapper = new ObjectMapper();
-
-        GeoJsonObject featureCollection = new ObjectMapper().readValue(geoString.toString(), GeoJsonObject.class);
-
-        if (featureCollection instanceof List) {
-            List<Feature> featuresList = (List<Feature>)featureCollection;
-            if(!features.isEmpty()) {
-                GeoJsonObject geometry = featuresList.get(0).getGeometry();
-                if (geometry instanceof Point) {
-                    Point point = (Point) geometry;
-                    List<LngLatAlt> coordinates = new ArrayList<>();
-                    coordinates.add(point.getCoordinates());
-                    cassandraEvent.setCoordinates(coordinates.toString());
-                } else if (geometry instanceof Polygon) {
-                    Polygon polygon = (Polygon) geometry;
-                    List<List<LngLatAlt>> coordinates = new ArrayList<>();
-                    coordinates.addAll(polygon.getCoordinates());
-                    cassandraEvent.setCoordinates(coordinates.toString());
-                }
-            }
-
-        }
+        LOG.info("Message To publish :  " + message);
         LOG.info("Consumer has been started");
+        Event cassandraEvent = new Event();
+        CassandraService cassandraService = new CassandraService();
+        cassandraEvent.setName(message.getEvent_name());
+        cassandraEvent.setDescription(message.getEvent_description());
+        cassandraEvent.setCoordinates(message.getGeoJson().toString());
+        cassandraEvent.setStartTime(message.getStart_time());
+        cassandraEvent.setEndTime(message.getEnd_time());
+        cassandraService.addEventDetails(cassandraEvent);
         LOG.info("Adding to Cassandra"+cassandraEvent.toString());
-        kafkaEvent.setCoordinates(geoString.toJSONString());
-        //
-        // kafkaEvent.setCurrent_time();
-        producer.sendToKafka(kafkaEvent);
-
-        //TODO
-        //return "User Listener";
+        producer.sendToKafka(message);
     }
 
     @KafkaListener(topics = "${kafka.topic.user}")
-    public void listen(@Payload Event event) {
-        //Send to web client
-        //TODO
+    public void listen(@Payload EventDetailsPojo event) {
         LOG.info("received message from kafka ='{}'", event.toString());
-        //convert to json format for ws
-
-        JSONObject eventResponse = new JSONObject();
-        eventResponse.put("event_name",event.getName());
-        eventResponse.put("event_description",event.getDescription());
-        eventResponse.put("geoJson",event.getCoordinates());
-        this.template.convertAndSend("/topic/user", eventResponse.toJSONString());
+        this.template.convertAndSend("/topic/user", event);
     }
 
 
-
-
-
     @MessageMapping("/addEventDetails")
-    public void addEventDetails(String message) throws Exception {
+    public void addEventDetails(EventDetailsPojo message) throws Exception {
         LOG.info("Sending event to Kafka ");
         LOG.info("Message :  " + message);
         //TODO think about user group id
