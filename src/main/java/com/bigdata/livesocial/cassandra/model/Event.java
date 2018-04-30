@@ -5,6 +5,7 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Dixit Patel
@@ -24,7 +25,7 @@ CREATE TABLE event (
 @Table(value="event")
 public class Event {
     @PrimaryKey(value = "eventId")
-    private int eventId;
+    private UUID eventId;
 
     public String getName() {
         return name;
@@ -52,11 +53,22 @@ public class Event {
     @Column(value = "end")
     private Date endTime;
 
-    public int getEventId() {
+    @Column(value = "userName")
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public UUID getEventId() {
         return eventId;
     }
 
-    public void setEventId(int eventId) {
+    public void setEventId(UUID eventId) {
         this.eventId = eventId;
     }
 

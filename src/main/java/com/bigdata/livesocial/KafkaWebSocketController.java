@@ -19,6 +19,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.UUID;
+
 
 /**
  * @author Dixit Patel
@@ -28,9 +30,11 @@ public class KafkaWebSocketController {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaWebSocketController.class);
 
-
     @Autowired
     private SimpMessagingTemplate template;
+
+    @Autowired
+    private CassandraService cassandraService;
 
     @Autowired
     private UserProducer producer;
@@ -42,12 +46,14 @@ public class KafkaWebSocketController {
         Event cassandraEvent = new Event();
         CassandraService cassandraService = new CassandraService();
         cassandraEvent.setName(message.getEvent_name());
+        cassandraEvent.setUserName(message.getUser_name());
         cassandraEvent.setDescription(message.getEvent_description());
         cassandraEvent.setCoordinates(message.getGeoJson().toString());
         cassandraEvent.setStartTime(message.getStart_time());
         cassandraEvent.setEndTime(message.getEnd_time());
-        cassandraService.addEventDetails(cassandraEvent);
+        UUID eventId = cassandraService.addEventDetails(cassandraEvent);
         LOG.info("Adding to Cassandra"+cassandraEvent.toString());
+        message.setEventId(eventId);
         producer.sendToKafka(message);
     }
 
@@ -65,6 +71,5 @@ public class KafkaWebSocketController {
         //TODO think about user group id
         LOG.info("Consumer has been started");
         //TODO
-        //return "User Listener";
     }
 }

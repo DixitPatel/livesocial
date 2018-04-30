@@ -3,21 +3,39 @@ package com.bigdata.livesocial.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Dixit Patel
  */
 public class EventDetailsPojo {
 
+    private UUID event_id;
     private String event_name;
+    private String user_name;
     private String event_description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private Date start_time;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private Date end_time;
-    private boolean vote;
+    private String vote;
     private GeoJsonPojo geoJson;
 
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public UUID getEventId() {
+        return event_id;
+    }
+
+    public void setEventId(UUID eventId) {
+        this.event_id = eventId;
+    }
     public String getEvent_name() {
         return event_name;
     }
@@ -50,11 +68,11 @@ public class EventDetailsPojo {
         this.end_time = end_time;
     }
 
-    public boolean isVote() {
+    public String getVote() {
         return vote;
     }
 
-    public void setVote(boolean vote) {
+    public void setVote(String vote) {
         this.vote = vote;
     }
 

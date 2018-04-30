@@ -6,7 +6,14 @@ CREATE TABLE event (
   coordinates text,
   name text,
   description text,
-  timestamp timestamp,
+  current_time timestamp,
   start timestamp,
-  end timestamp
+  end timestamp,
+  userName text
+);
+
+CREATE TABLE user (
+  name text PRIMARY KEY,
+
+
 );
