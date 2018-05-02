@@ -79,7 +79,51 @@
                 closeButton: false,
                 closeOnClick: false
             });
-        map.on('load', function () {
+        function showGreeting(message) {
+                var parsed = JSON.parse(message);
+                map.addLayer({
+                    "id":"places",
+                    'user_name': parsed[0].user_name,
+                    'event_name': parsed[1].event_name,
+                    'event_description': parsed[2].event_description,
+                    'start_time': parsed[3].start_time,
+                    'end_time': parsed[4].end_time,
+                    'vote': parsed[5].vote,
+                    'geoJson': {
+                        "type": parsed[6].geoJson.type,
+                        'features': [{
+                            "type": parsed[7].geoJson.features.type,
+                            "properties": {
+                                "description": parsed[2].event_description
+                            },
+                            "geometry": {
+                                "type": parsed[8].geoJson.geometry.type,
+                                "coordinates": [parsed[9].geoJson.geometry.coordinates[0], parsed[9].geoJson.geometry.coordinates[1]]
+                            }
+                        }]
+                    }
+                })
+                map.on('mouseenter', 'places', function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = e.features[0].properties.description;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+                popup.setLngLat(coordinates)
+                    .setHTML(description)
+                    .addTo(map);
+                map.on('mouseleave', 'places', function () {
+                    map.getCanvas().style.cursor = '';
+                    popup.remove();
+                });
+            });
+
+            }
+/*         map.on('load', function () {
                 // Add a layer showing the places.
                 map.addLayer({
                     "id": "places",
@@ -124,7 +168,7 @@
                 map.getCanvas().style.cursor = '';
                 popup.remove();
             });
-            });
+            }); */
             
 
         //create a layer which will parse and display the users/location
@@ -139,14 +183,7 @@
 
         map.addControl(geolocate);
 
-        function showGreeting(message){
-            var parsed = JSON.parse(message);
-            var popup = new mapboxgl.Popup({ closeOnClick: false })
-                .setLngLat([parsed[0].lat, parsed[1].lng])
-                .setHTML(parsed[2].name)
-                .addTo(map);
-            console.log(parsed)
-        }
+
         function connect() {
             var socket = new SockJS('/livesocial-sock');
             stompClient = Stomp.over(socket);
@@ -167,13 +204,15 @@
             console.log(coordinates2)
             console.log(guid())
             connect();
-            map.on('contextmenu', function (e1) {
+            map.on('contextmenu', function addM(e1) {
                 var el = document.createElement('div');
                 el.className = 'marker';
-                new mapboxgl.Marker(el)
+                var mark1 = new mapboxgl.Marker(el)
                     .setLngLat(e1.lngLat)
                     .addTo(map);
                 ee1 = e1.lngLat
+                map.off('contextmenu', addM);
+                
                 // var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
                 // var mapDiv = document.getElementById('map');
                 // mapDiv.style.height = '50%';
@@ -223,28 +262,7 @@
             map.getCanvas().style.cursor = 'pointer';
         });
         var uuid = guid();
-        var event1 = null;
-    })
-
-        /* ws.onmessage = function (event) {
-            var data = JSON.parse(event.data);
-            if (eventMarkers[data.event1] == null) {
-                var el = document.createElement('i');
-                el.className = 'marker';
-                el.addEventListener('click', function () {
-                    status = 'new event';
-                    event1 = data.event1;
-
-                    //Add directions to the event for the user
-                    // in this function
-                })
-            }
-        } */
-
-                //ws.send(JSON.stringify({ user: uuid, lngLat: [coordinates1, coordinates2] }));
-
-
-
+    
 
     </script>
 </body>
