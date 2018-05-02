@@ -12,11 +12,12 @@ import java.util.UUID;
 @Service
 public class CassandraService {
 
-    @Autowired
-    CassandraDaoImpl cassandraDao;
+    //@Autowired
+    CassandraDaoImpl cassandraDaoImpl;
 
     public UUID addEventDetails(Event event){
-        UUID eventId = cassandraDao.addEventDetails(event);
+        CassandraDaoImpl cassandraDaoImpl = new CassandraDaoImpl(null);
+        UUID eventId = cassandraDaoImpl.addEventDetails(event);
         return eventId;
     }
 }

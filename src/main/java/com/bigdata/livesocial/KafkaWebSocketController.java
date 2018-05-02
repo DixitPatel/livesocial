@@ -2,14 +2,9 @@ package com.bigdata.livesocial;
 
 import com.bigdata.livesocial.cassandra.CassandraService;
 import com.bigdata.livesocial.cassandra.model.Event;
-import com.bigdata.livesocial.model.Coordinate;
 import com.bigdata.livesocial.kafka_common.producer.UserProducer;
 import com.bigdata.livesocial.model.EventDetailsPojo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.geojson.*;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

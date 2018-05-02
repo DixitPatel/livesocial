@@ -3,8 +3,6 @@ package com.bigdata.livesocial.cassandra;
 import com.bigdata.livesocial.KafkaWebSocketController;
 import com.bigdata.livesocial.cassandra.model.Event;
 import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.utils.UUIDs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +11,7 @@ import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;
 import org.springframework.data.cassandra.core.query.Criteria;
 import org.springframework.data.cassandra.core.query.Query;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -24,6 +23,7 @@ import java.util.UUID;
  */
 
 @Repository
+@Component
 public class CassandraDaoImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(CassandraDaoImpl.class);
