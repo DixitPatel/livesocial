@@ -29,6 +29,13 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
    border-radius: 30%;
    cursor: pointer;
  }
+ .mapboxgl-popup {
+  max-width: 200px;
+}
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
  .hidden {
      visibility: hidden;
      overflow: hidden;
@@ -40,12 +47,16 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
     max-width: 98%;
     margin: 2px auto;
     padding: 10px;
-    background: #F7F7F7;
-    display: none;
+    background: #EDEDED;
+    /* display: none; */
+    box-shadow: 0 1px 3px 10px rgba(0, 0, 0, 0.1);
 }
+
+
+
 .form-style-6 h1{
-    background: #43D1AF;
-    padding: 20px 0;
+    background: #6caee0;
+    padding: 20px 10px;
     font-size: 140%;
     font-weight: 300;
     text-align: center;
@@ -61,7 +72,7 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
 .form-style-6 input[type="time"],
 .form-style-6 input[type="url"],
 .form-style-6 textarea,
-.form-style-6 select 
+.form-style-6 select
 {
     -webkit-transition: all 0.30s ease-in-out;
     -moz-transition: all 0.30s ease-in-out;
@@ -74,10 +85,10 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
     width: 100%;
     background: #fff;
     margin-bottom: 1.25%;
-    border: 1px solid #ccc;
-    padding: 0.5%;
+    border: 2px solid #ccc;
+    padding: 10px 20px;
     color: #555;
-    font: 95% Arial, Helvetica, sans-serif;
+    font: 100% Arial, Helvetica, sans-serif;
 }
 .form-style-6 input[type="text"]:focus,
 .form-style-6 input[type="date"]:focus,
@@ -97,17 +108,17 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
 
 .form-style-6 input[type="submit"],
 .form-style-6 input[type="button"]{
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
+    display: block;
+    border-radius: 2px;
+    background-color: #6caee0;
+    color: #f9f9f9;
+    font-weight: bold;
+    box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.08);
     width: 100%;
-    padding: 0.5%;
-    background: #43D1AF;
-    border-bottom: 2px solid #30C29E;
-    border-top-style: none;
-    border-right-style: none;
-    border-left-style: none;    
-    color: #fff;
+    padding: 14px 22px;
+    border: 0;
+    cursor: pointer;
+
 }
 .form-style-6 input[type="submit"]:hover,
 .form-style-6 input[type="button"]:hover{

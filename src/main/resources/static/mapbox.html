@@ -21,8 +21,9 @@
   <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css' />
 
   <div id='map' class="w3-container">
+    <div class="main-content">
     <div id="form-style-6" class="form-style-6">
-      <h1>Welcome to Live Social - Create Event</h1>
+      <h1>LiveSocial : Add Event</h1>
       <form class="form">
         <input type="text" id="name1" name="field1" placeholder="Enter User Name" />
         <br/>
@@ -67,7 +68,7 @@
       container: 'map', // container id
       style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
       center: [-96, 37.8],
-      zoom: 2 // starting zoom
+      zoom: 3 // starting zoom
     });
     var draw = new MapboxDraw({
       displayControlsDefault: false,
@@ -91,7 +92,15 @@
         new mapboxgl.Marker(el)
           .setLngLat(marker.geometry.coordinates)
           .addTo(map);
+        new mapboxgl.Marker(el)
+          .setLngLat(marker.geometry.coordinates)
+          .setPopup(new mapboxgl.Popup({
+              offset: 25
+            }) // add popups
+            .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+          .addTo(map);
       });
+
 
       map.on('mouseenter', 'places', function(e) {
         var coordinates = e.features[0].geometry.coordinates.slice();
@@ -113,53 +122,6 @@
       });
 
     }
-    /*         map.on('load', function () {
-                    // Add a layer showing the places.
-                    map.addLayer({
-                        "id": "places",
-                        "type": "symbol",
-                        "source": {
-                            "type": "geojson",
-                            "data": {
-                                "type": "FeatureCollection",
-                                "features": [{
-                                    "type": "Feature",
-                                    "properties": {
-                                        "description": "<strong>Avengers</strong><p><a href=\"https://www.cinemark.com/avengers-infinity-war\" target=\"_blank\" title=\"Opens in a new window\">Book Tickets Here!</a> Rated 5-star movie. 12:00-6:00 p.m.</p>",
-                                        "icon": "theatre"
-                                    },
-                                    "geometry": {
-                                        "type": "Point",
-                                        "coordinates": [-105.2542, 40.0173]
-                                    }
-                                }]
-                            }
-                        },
-                        "layout": {
-                        "icon-image": "{icon}-15",
-                        "icon-allow-overlap": true
-                        }
-                    });
-                    map.on('mouseenter', 'places', function (e) {
-                    var coordinates = e.features[0].geometry.coordinates.slice();
-                    var description = e.features[0].properties.description;
-
-                    // Ensure that if the map is zoomed out such that multiple
-                    // copies of the feature are visible, the popup appears
-                    // over the copy being pointed to
-                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                    }
-
-                    popup.setLngLat(coordinates)
-                        .setHTML(description)
-                        .addTo(map);
-                    map.on('mouseleave', 'places', function () {
-                    map.getCanvas().style.cursor = '';
-                    popup.remove();
-                });
-                }); */
-
 
     //create a layer which will parse and display the users/location
 
@@ -232,6 +194,7 @@
           'features': [{
             "type": "Feature",
             "properties": {
+              "title":$("#name2").val(),
               "description": $("#details1").val()
             },
             "geometry": {

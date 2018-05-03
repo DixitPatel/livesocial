@@ -7,7 +7,7 @@ import org.geojson.Geometry;
  */
 public class Feature {
     private String type;
-    private PropertiesPojo description;
+    private PropertiesPojo properties;
 
     public GeometryPojo getGeometry() {
         return geometry;
@@ -27,12 +27,11 @@ public class Feature {
         this.type = type;
     }
 
-    public PropertiesPojo getDescription() {
-        return description;
+    public PropertiesPojo getProperties() {
+        return properties;
     }
 
-    public void setDescription(PropertiesPojo description) {
-        this.description = description;
+    public void setProperties(PropertiesPojo properties) {
+        this.properties = properties;
     }
-
 }
