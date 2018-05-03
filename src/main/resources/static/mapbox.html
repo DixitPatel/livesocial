@@ -80,25 +80,24 @@
                 closeOnClick: false
             });
         function showGreeting(message) {
-                var parsed = JSON.parse(message);
                 map.addLayer({
                     "id":"places",
-                    'user_name': parsed[0].user_name,
-                    'event_name': parsed[1].event_name,
-                    'event_description': parsed[2].event_description,
-                    'start_time': parsed[3].start_time,
-                    'end_time': parsed[4].end_time,
-                    'vote': parsed[5].vote,
-                    'geoJson': {
-                        "type": parsed[6].geoJson.type,
-                        'features': [{
-                            "type": parsed[7].geoJson.features.type,
+                    "event_name": message.event_name,
+                    "user_name": message.user_name,
+                    "event_description": message.event_description,
+                    "start_time": message.start_time,
+                    "end_time": message.end_time,
+                    "vote": message.vote,
+                    "geoJson": {
+                        "type": message.geoJson.type,
+                        "features": [{
+                            "type": message.geoJson.features.type,
                             "properties": {
-                                "description": parsed[2].event_description
+                                "description": message.event_description
                             },
                             "geometry": {
-                                "type": parsed[8].geoJson.geometry.type,
-                                "coordinates": [parsed[9].geoJson.geometry.coordinates[0], parsed[9].geoJson.geometry.coordinates[1]]
+                                "type": message.geoJson.geometry.type,
+                                "coordinates": [message.geoJson.geometry.coordinates[0], message.geoJson.geometry.coordinates[1]]
                             }
                         }]
                     }
