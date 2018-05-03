@@ -2,268 +2,259 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>World View</title>
-    <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="main.css">
-    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <script src="/webjars/jquery/jquery.min.js"></script>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+  <meta charset="UTF-8">
+  <title>World View</title>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="main.css">
+  <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <script src="/webjars/jquery/jquery.min.js"></script>
+  <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+  <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 
 </head>
 
 <body>
-    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
-    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'/>
+  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css' />
 
-    <div id='map' class="w3-container">
-        <div id="form-style-6" class="form-style-6">
-            <h1>Welcome to Live Social - Create Event</h1>
-            <form class="form">
-                <input type="text" id="name1" name="field1" placeholder="Enter User Name" />
-                <br/>
-                <input type="text" id="name2" name="field2" placeholder="Enter Event Name" />
-                <br/>
-                <label for="field2">Start Time</label> <br/>
-                <input type="time" id="starttime1" name="field2" />
-                <br/>
-                <br/>
-                <label for="field3">End Time</label> <br/>
-                <input type="time" id="endtime1" name="field4" placeholder="End Time" />
-                <br/>
-                <textarea name="field3" id="details1" placeholder="Enter Event Details"></textarea>
-                <br/>
-                <label for="vote">Allow public voting?</label>
-                <label for="vote">Yes</label>
-                <input type="radio" name = "vote" id="radio1" value="Yes">
-                <label for="vote">No</label>
-                <input type="radio" name = "vote" id="radio2" value="No">
-                <br/><br/>
-                <input id="sub1" type="submit" />
-            </form>
-        </div>
+  <div id='map' class="w3-container">
+    <div id="form-style-6" class="form-style-6">
+      <h1>Welcome to Live Social - Create Event</h1>
+      <form class="form">
+        <input type="text" id="name1" name="field1" placeholder="Enter User Name" />
+        <br/>
+        <input type="text" id="name2" name="field2" placeholder="Enter Event Name" />
+        <br/>
+        <label for="field2">Start Time</label> <br/>
+        <input type="time" id="starttime1" name="field2" />
+        <br/>
+        <br/>
+        <label for="field3">End Time</label> <br/>
+        <input type="time" id="endtime1" name="field4" placeholder="End Time" />
+        <br/>
+        <textarea name="field3" id="details1" placeholder="Enter Event Details"></textarea>
+        <br/>
+        <label for="vote">Allow public voting?</label>
+        <label for="vote">Yes</label>
+        <input type="radio" name="vote" id="radio1" value="Yes">
+        <label for="vote">No</label>
+        <input type="radio" name="vote" id="radio2" value="No">
+        <br/><br/>
+        <input id="sub1" type="submit" />
+      </form>
     </div>
-    <script>
-        window.onload = function () {
+  </div>
+  <script>
+    window.onload = function() {
 
-            document.getElementById("form-style-6").style.display = "none";
+      document.getElementById("form-style-6").style.display = "none";
 
-        };
-        function guid() {
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    };
+
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    }
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJ0b25pZWZ5IiwiYSI6ImNqZGh5cDhwdzBmMHIycHNhcTd4b3p3ZHkifQ.E-jU9X_2jy_dj7qrxr_gjA';
+
+    var map = new mapboxgl.Map({
+
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+      center: [-96, 37.8],
+      zoom: 2 // starting zoom
+    });
+    var draw = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: true,
+        trash: true
+      }
+    });
+    map.addControl(draw);
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    });
+
+    function showGreeting(message) {
+      message = JSON.parse(message)
+      var geoJsonData = message["geoJson"]
+      geoJsonData.features.forEach(function(marker) {
+        var el = document.createElement('div');
+        el.className = 'marker';
+        new mapboxgl.Marker(el)
+          .setLngLat(marker.geometry.coordinates)
+          .addTo(map);
+      });
+
+      map.on('mouseenter', 'places', function(e) {
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.description;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
-        mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJ0b25pZWZ5IiwiYSI6ImNqZGh5cDhwdzBmMHIycHNhcTd4b3p3ZHkifQ.E-jU9X_2jy_dj7qrxr_gjA';
-
-        var map = new mapboxgl.Map({
-            container: 'map', // container id
-            style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-            center: [-96, 37.8],
-            zoom: 2 // starting zoom
+        popup.setLngLat(coordinates)
+          .setHTML(description)
+          .addTo(map);
+        map.on('mouseleave', 'places', function() {
+          map.getCanvas().style.cursor = '';
+          popup.remove();
         });
-        var draw = new MapboxDraw({
-                displayControlsDefault: false,
-                controls: {
-                    polygon: true,
-                    trash: true
-                }
-            });
-        map.addControl(draw);
-        var popup = new mapboxgl.Popup({
-                closeButton: false,
-                closeOnClick: false
-            });
-        function showGreeting(message) {
-                map.addLayer({
-                    "id":"places",
-                    "event_name": message.event_name,
-                    "user_name": message.user_name,
-                    "event_description": message.event_description,
-                    "start_time": message.start_time,
-                    "end_time": message.end_time,
-                    "vote": message.vote,
-                    "geoJson": {
-                        "type": message.geoJson.type,
-                        "features": [{
-                            "type": message.geoJson.features.type,
-                            "properties": {
-                                "description": message.event_description
-                            },
-                            "geometry": {
-                                "type": message.geoJson.geometry.type,
-                                "coordinates": [message.geoJson.geometry.coordinates[0], message.geoJson.geometry.coordinates[1]]
-                            }
-                        }]
-                    }
-                })
-                map.on('mouseenter', 'places', function (e) {
-                var coordinates = e.features[0].geometry.coordinates.slice();
-                var description = e.features[0].properties.description;
+      });
 
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
-                popup.setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(map);
-                map.on('mouseleave', 'places', function () {
+    }
+    /*         map.on('load', function () {
+                    // Add a layer showing the places.
+                    map.addLayer({
+                        "id": "places",
+                        "type": "symbol",
+                        "source": {
+                            "type": "geojson",
+                            "data": {
+                                "type": "FeatureCollection",
+                                "features": [{
+                                    "type": "Feature",
+                                    "properties": {
+                                        "description": "<strong>Avengers</strong><p><a href=\"https://www.cinemark.com/avengers-infinity-war\" target=\"_blank\" title=\"Opens in a new window\">Book Tickets Here!</a> Rated 5-star movie. 12:00-6:00 p.m.</p>",
+                                        "icon": "theatre"
+                                    },
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [-105.2542, 40.0173]
+                                    }
+                                }]
+                            }
+                        },
+                        "layout": {
+                        "icon-image": "{icon}-15",
+                        "icon-allow-overlap": true
+                        }
+                    });
+                    map.on('mouseenter', 'places', function (e) {
+                    var coordinates = e.features[0].geometry.coordinates.slice();
+                    var description = e.features[0].properties.description;
+
+                    // Ensure that if the map is zoomed out such that multiple
+                    // copies of the feature are visible, the popup appears
+                    // over the copy being pointed to
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    popup.setLngLat(coordinates)
+                        .setHTML(description)
+                        .addTo(map);
+                    map.on('mouseleave', 'places', function () {
                     map.getCanvas().style.cursor = '';
                     popup.remove();
                 });
-            });
+                }); */
 
-            }
-/*         map.on('load', function () {
-                // Add a layer showing the places.
-                map.addLayer({
-                    "id": "places",
-                    "type": "symbol",
-                    "source": {
-                        "type": "geojson",
-                        "data": {
-                            "type": "FeatureCollection",
-                            "features": [{
-                                "type": "Feature",
-                                "properties": {
-                                    "description": "<strong>Avengers</strong><p><a href=\"https://www.cinemark.com/avengers-infinity-war\" target=\"_blank\" title=\"Opens in a new window\">Book Tickets Here!</a> Rated 5-star movie. 12:00-6:00 p.m.</p>",
-                                    "icon": "theatre"
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [-105.2542, 40.0173]
-                                }
-                            }]
-                        }
-                    },
-                    "layout": {
-                    "icon-image": "{icon}-15",
-                    "icon-allow-overlap": true
-                    }
-                });
-                map.on('mouseenter', 'places', function (e) {
-                var coordinates = e.features[0].geometry.coordinates.slice();
-                var description = e.features[0].properties.description;
 
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
+    //create a layer which will parse and display the users/location
 
-                popup.setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(map);
-                map.on('mouseleave', 'places', function () {
-                map.getCanvas().style.cursor = '';
-                popup.remove();
-            });
-            }); */
-            
+    var geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true
+    });
 
-        //create a layer which will parse and display the users/location
 
-        var geolocate = new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
+    map.addControl(geolocate);
+
+
+    function connect() {
+      var socket = new SockJS('/livesocial-sock');
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, function(frame) {
+        //setConnected(true);
+        console.log('Connected1: ' + frame);
+        stompClient.subscribe('/topic/user', function(greeting) {
+          showGreeting((greeting.body));
+        });
+      });
+    }
+    var ee1 = null;
+    geolocate.on('geolocate', (e) => {
+      console.log(e)
+      coordinates2 = e.coords.longitude
+      coordinates1 = e.coords.latitude
+      console.log(coordinates1)
+      console.log(coordinates2)
+      console.log(guid())
+      connect();
+      map.on('contextmenu', function addM(e1) {
+        var el = document.createElement('div');
+        el.className = 'marker';
+        var mark1 = new mapboxgl.Marker(el)
+          .setLngLat(e1.lngLat)
+          .addTo(map);
+        ee1 = e1.lngLat
+        map.off('contextmenu', addM);
+
+        // var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
+        // var mapDiv = document.getElementById('map');
+        // mapDiv.style.height = '50%';
+        // mapCanvas.style.height = '50%';
+        // //mapCanvas.style.top='100em';
+        // map.resize();
+        //document.getElementById('form-style-6').style.top = '50em';
+        document.getElementById("form-style-6").style.display = "block";
+
+        //document.getElementById("form-style-6").style.visibility = "visible"
+
+      });
+    });
+
+
+
+    function sendEventDetails() {
+      stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+        'user_name': $("#name1").val(),
+        'event_name': $("#name2").val(),
+        'event_description': $("#details1").val(),
+        'start_time': $("#starttime1").val(),
+        'end_time': $("#endtime1").val(),
+        'vote': document.querySelector('input[name="vote"]:checked').value,
+        'geoJson': {
+          "type": "FeatureCollection",
+          'features': [{
+            "type": "Feature",
+            "properties": {
+              "description": $("#details1").val()
             },
-            trackUserLocation: true
-        });
-
-
-        map.addControl(geolocate);
-
-
-        function connect() {
-            var socket = new SockJS('/livesocial-sock');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-                //setConnected(true);
-                console.log('Connected1: ' + frame);
-                stompClient.subscribe('/topic/user', function (greeting) {
-                    showGreeting((greeting.body));
-                });
-            });
+            "geometry": {
+              "type": "Point",
+              "coordinates": [ee1.lng, ee1.lat]
+            }
+          }]
         }
-        var ee1 = null;
-        geolocate.on('geolocate', (e) => {
-            console.log(e)
-            coordinates2 = e.coords.longitude
-            coordinates1 = e.coords.latitude
-            console.log(coordinates1)
-            console.log(coordinates2)
-            console.log(guid())
-            connect();
-            map.on('contextmenu', function addM(e1) {
-                var el = document.createElement('div');
-                el.className = 'marker';
-                var mark1 = new mapboxgl.Marker(el)
-                    .setLngLat(e1.lngLat)
-                    .addTo(map);
-                ee1 = e1.lngLat
-                map.off('contextmenu', addM);
-                
-                // var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-                // var mapDiv = document.getElementById('map');
-                // mapDiv.style.height = '50%';
-                // mapCanvas.style.height = '50%';
-                // //mapCanvas.style.top='100em';
-                // map.resize();
-                //document.getElementById('form-style-6').style.top = '50em';
-                document.getElementById("form-style-6").style.display = "block";
-                
-                //document.getElementById("form-style-6").style.visibility = "visible"
-
-            });
-        });
-
-
-
-        function sendEventDetails() {
-            stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
-                'user_name': $("#name1").val(),
-                'event_name': $("#name2").val(),
-                'event_description': $("#details1").val(),
-                'start_time': $("#starttime1").val(),
-                'end_time': $("#endtime1").val(),
-                'vote': document.querySelector('input[name="vote"]:checked').value,
-                'geoJson': {
-                    "type": "FeatureCollection",
-                    'features': [{
-                        "type": "Feature",
-                        "properties": {
-                            "description": $("#details1").val()
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [ee1.lng, ee1.lat]
-                        }
-                    }]
-                }
-            }));
-        }
-            $(function () {
-            $("form").on('submit', function (e) {
-                e.preventDefault();
-            });
-            $("#sub1").click(function () { sendEventDetails(); });
-        });
-        map.on('mouseenter', function () {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-        var uuid = guid();
-    
-
-    </script>
+      }));
+    }
+    $(function() {
+      $("form").on('submit', function(e) {
+        e.preventDefault();
+      });
+      $("#sub1").click(function() {
+        sendEventDetails();
+      });
+    });
+    map.on('mouseenter', function() {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    var uuid = guid();
+  </script>
 </body>
 
 </html>
