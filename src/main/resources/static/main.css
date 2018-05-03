@@ -10,7 +10,7 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
     border-radius: 5px;
 }
 #map { display: block; position: static;  width:98%; height: 800px; }
-#form-style-6{ position: absolute; z-index: 10; }
+#form-style-6{ position: absolute; z-index: 10; display:none}
 .calculation-box {
     height: 75px;
     width: 150px;
@@ -24,8 +24,8 @@ body { margin:0; padding:0; background-color: #f5f5f5;}
  .marker {
    background-image: url('mapbox-icon.png');
    background-size: cover;
-   width: 20px;
-   height: 20px;
+   width: 40px;
+   height: 40px;
    border-radius: 30%;
    cursor: pointer;
  }

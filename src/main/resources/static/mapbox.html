@@ -16,7 +16,7 @@
 </head>
 
 <body>
-  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+  <script src="./turf_ThuMay032018.min.js"></script>
   <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
   <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css' />
 
@@ -70,14 +70,6 @@
       center: [-96, 37.8],
       zoom: 3 // starting zoom
     });
-    var draw = new MapboxDraw({
-      displayControlsDefault: false,
-      controls: {
-        polygon: true,
-        trash: true
-      }
-    });
-    map.addControl(draw);
     var popup = new mapboxgl.Popup({
       closeButton: false,
       closeOnClick: false
@@ -91,29 +83,10 @@
         el.className = 'marker';
         new mapboxgl.Marker(el)
           .setLngLat(marker.geometry.coordinates)
-          .addTo(map);
-        new mapboxgl.Marker(el)
-          .setLngLat(marker.geometry.coordinates)
           .setPopup(new mapboxgl.Popup({
               offset: 25
             }) // add popups
             .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-          .addTo(map);
-      });
-
-
-      map.on('mouseenter', 'places', function(e) {
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.description;
-
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-        popup.setLngLat(coordinates)
-          .setHTML(description)
           .addTo(map);
         map.on('mouseleave', 'places', function() {
           map.getCanvas().style.cursor = '';
@@ -124,6 +97,7 @@
     }
 
     //create a layer which will parse and display the users/location
+    
 
     var geolocate = new mapboxgl.GeolocateControl({
       positionOptions: {
@@ -134,6 +108,22 @@
 
 
     map.addControl(geolocate);
+    var draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+            polygon: true,
+            trash: true
+        }
+    });
+    map.addControl(draw);
+    map.on('draw.create', updateArea);
+
+    function updateArea(e) {
+        var data = draw.getAll();
+        var coords = turf.meta.coordAll(draw);
+        var area = turf.area(d);
+        console.log(coords)
+        }
 
 
     function connect() {
@@ -147,36 +137,27 @@
         });
       });
     }
+    function addMarker(){
+        map.on('contextmenu', function addM(e1) {
+            var el = document.createElement('div');
+            el.className = 'marker';
+            var mark1 = new mapboxgl.Marker(el)
+                .setLngLat(e1.lngLat)
+                .addTo(map);
+            ee1 = e1.lngLat
+            map.off('contextmenu', addM);
+            document.getElementById("form-style-6").style.display = "block";
+            //document.getElementById("form-style-6").style.visibility = "visible"
+        });
+    }
     var ee1 = null;
-    geolocate.on('geolocate', (e) => {
+    geolocate.on('geolocate', function geo1(e) {
       console.log(e)
       coordinates2 = e.coords.longitude
       coordinates1 = e.coords.latitude
-      console.log(coordinates1)
-      console.log(coordinates2)
-      console.log(guid())
       connect();
-      map.on('contextmenu', function addM(e1) {
-        var el = document.createElement('div');
-        el.className = 'marker';
-        var mark1 = new mapboxgl.Marker(el)
-          .setLngLat(e1.lngLat)
-          .addTo(map);
-        ee1 = e1.lngLat
-        map.off('contextmenu', addM);
-
-        // var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-        // var mapDiv = document.getElementById('map');
-        // mapDiv.style.height = '50%';
-        // mapCanvas.style.height = '50%';
-        // //mapCanvas.style.top='100em';
-        // map.resize();
-        //document.getElementById('form-style-6').style.top = '50em';
-        document.getElementById("form-style-6").style.display = "block";
-
-        //document.getElementById("form-style-6").style.visibility = "visible"
-
-      });
+      addMarker();
+      
     });
 
 
@@ -211,6 +192,9 @@
       });
       $("#sub1").click(function() {
         sendEventDetails();
+        $("form")[0].reset()
+        document.getElementById("form-style-6").style.display = "none";
+        addMarker();
       });
     });
     map.on('mouseenter', function() {
