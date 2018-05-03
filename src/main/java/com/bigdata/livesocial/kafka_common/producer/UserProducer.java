@@ -1,8 +1,6 @@
 package com.bigdata.livesocial.kafka_common.producer;
 
-import com.bigdata.livesocial.model.Coordinate;
-import com.bigdata.livesocial.model.Event;
-import com.bigdata.livesocial.model.EventDetailsPojo;
+import com.bigdata.livesocial.cassandra.model.EventDetailsPojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

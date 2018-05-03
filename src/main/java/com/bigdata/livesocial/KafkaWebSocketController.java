@@ -3,7 +3,7 @@ package com.bigdata.livesocial;
 import com.bigdata.livesocial.cassandra.CassandraService;
 import com.bigdata.livesocial.cassandra.model.Event;
 import com.bigdata.livesocial.kafka_common.producer.UserProducer;
-import com.bigdata.livesocial.model.EventDetailsPojo;
+import com.bigdata.livesocial.cassandra.model.EventDetailsPojo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +34,12 @@ public class KafkaWebSocketController {
     @Autowired
     private UserProducer producer;
 
+
     @MessageMapping("/publishEvent")
     public void publishEvent(EventDetailsPojo message) throws Exception {
         LOG.info("Message To publish :  " + message);
         LOG.info("Consumer has been started");
         Event cassandraEvent = new Event();
-        CassandraService cassandraService = new CassandraService();
         cassandraEvent.setName(message.getEvent_name());
         cassandraEvent.setUserName(message.getUser_name());
         cassandraEvent.setDescription(message.getEvent_description());

@@ -1,5 +1,6 @@
-package com.bigdata.livesocial.model;
+package com.bigdata.livesocial.cassandra.model;
 
+import com.bigdata.livesocial.model.GeoJsonPojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;

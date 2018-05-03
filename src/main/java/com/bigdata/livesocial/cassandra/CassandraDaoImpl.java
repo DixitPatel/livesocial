@@ -7,6 +7,7 @@ import com.datastax.driver.core.utils.UUIDs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.CassandraAdminOperations;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;
 import org.springframework.data.cassandra.core.query.Criteria;
@@ -30,10 +31,6 @@ public class CassandraDaoImpl {
 
     @Autowired
     private CassandraOperations cassandraOperations;
-
-    public CassandraDaoImpl(CassandraOperations cassandraOperations) {
-        this.cassandraOperations = cassandraOperations;
-    }
 
     public UUID addEventDetails(Event event){
         UUID eventId = UUIDs.timeBased();
