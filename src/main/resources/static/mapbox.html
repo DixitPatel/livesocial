@@ -109,9 +109,9 @@
                       second: "numeric"
                   });
                   // Find the distance between now an the count down date
-                  var a = moment(now, 'HH:mm:ss');
-                  var b = moment(message.end_time, 'HH:mm:ss');
-                  var duration = moment.duration(a.diff(b))
+                  var current_time = moment(now, 'HH:mm:ss');
+                  var event_end = moment(message.end_time, 'HH:mm:ss');
+                  var duration = moment.duration(current_time.diff(event_end))
                   var hours = duration.get('hours');
                   var minutes = duration.get('minutes');
                   var seconds = duration.get('seconds');

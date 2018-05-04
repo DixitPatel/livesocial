@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CassandraController {
 
 
-    @Autowired
-    CassandraService cassandraService;
+  //  @Autowired
+  //  CassandraService cassandraService;
 
 
     @RequestMapping(method = RequestMethod.POST, value = "/test")
