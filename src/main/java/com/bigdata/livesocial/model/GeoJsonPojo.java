@@ -23,6 +23,7 @@ public class GeoJsonPojo {
     }
 
     public void setFeatures(List<Feature> features) {
+
         this.features = features;
     }
 }

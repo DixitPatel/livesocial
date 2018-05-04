@@ -16,192 +16,263 @@
 </head>
 
 <body>
-  <script src="./turf_ThuMay032018.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
   <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
   <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css' />
 
   <div id='map' class="w3-container">
     <div class="main-content">
-    <div id="form-style-6" class="form-style-6">
-      <h1>LiveSocial : Add Event</h1>
-      <form class="form">
-        <input type="text" id="name1" name="field1" placeholder="Enter User Name" />
-        <br/>
-        <input type="text" id="name2" name="field2" placeholder="Enter Event Name" />
-        <br/>
-        <label for="field2">Start Time</label> <br/>
-        <input type="time" id="starttime1" name="field2" />
-        <br/>
-        <br/>
-        <label for="field3">End Time</label> <br/>
-        <input type="time" id="endtime1" name="field4" placeholder="End Time" />
-        <br/>
-        <textarea name="field3" id="details1" placeholder="Enter Event Details"></textarea>
-        <br/>
-        <label for="vote">Allow public voting?</label>
-        <label for="vote">Yes</label>
-        <input type="radio" name="vote" id="radio1" value="Yes">
-        <label for="vote">No</label>
-        <input type="radio" name="vote" id="radio2" value="No">
-        <br/><br/>
-        <input id="sub1" type="submit" />
-      </form>
+      <div id="form-style-6" class="form-style-6">
+        <h1>LiveSocial : Add Event</h1>
+        <form class="form">
+          <input type="text" id="name1" name="field1" placeholder="Enter User Name" />
+          <br/>
+          <input type="text" id="name2" name="field2" placeholder="Enter Event Name" />
+          <br/>
+          <label for="field2">Start Time</label> <br/>
+          <input type="time" id="starttime1" name="field2" />
+          <br/>
+          <br/>
+          <label for="field3">End Time</label> <br/>
+          <input type="time" id="endtime1" name="field4" placeholder="End Time" />
+          <br/>
+          <textarea name="field3" id="details1" placeholder="Enter Event Details"></textarea>
+          <br/>
+          <label for="vote">Allow public voting?</label>
+          <label for="vote">Yes</label>
+          <input type="radio" name="vote" id="radio1" value="Yes">
+          <label for="vote">No</label>
+          <input type="radio" name="vote" id="radio2" value="No">
+          <br/><br/>
+          <input id="sub1" type="submit" />
+        </form>
+      </div>
+      <div id="form-style-7" class="form-style-7">
+        <h1>LiveSocial : Create an Alert </h1>
+        <form class="alert-form">
+          <input type="text" id="alert-name1" name="field1" placeholder="Alert Name" />
+          <br/>
+          <textarea name="field3" id="alert-name2" placeholder="Enter Alert Details"></textarea>
+
+          <label for="alert-vote">Allow public voting?</label>
+          <label for="alert-vote">Yes</label>
+          <input type="radio" name="alert-vote" id="alert-radio1" value="Yes">
+          <label for="alert-vote">No</label>
+          <input type="radio" name="alert-vote" id="alert-radio2" value="No">
+          <br/>
+          <input id="alert-submit" type="submit" />
+        </form>
+      </div>
     </div>
-  </div>
-  <script>
-    window.onload = function() {
+    <script>
+      window.onload = function() {
 
-      document.getElementById("form-style-6").style.display = "none";
+        document.getElementById("form-style-6").style.display = "none";
 
-    };
+      };
 
-    function guid() {
-      function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+      function guid() {
+        function s4() {
+          return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
       }
-      return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    }
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJ0b25pZWZ5IiwiYSI6ImNqZGh5cDhwdzBmMHIycHNhcTd4b3p3ZHkifQ.E-jU9X_2jy_dj7qrxr_gjA';
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJ0b25pZWZ5IiwiYSI6ImNqZGh5cDhwdzBmMHIycHNhcTd4b3p3ZHkifQ.E-jU9X_2jy_dj7qrxr_gjA';
 
-    var map = new mapboxgl.Map({
+      var map = new mapboxgl.Map({
 
-      container: 'map', // container id
-      style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-      center: [-96, 37.8],
-      zoom: 3 // starting zoom
-    });
-    var popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false
-    });
-
-    function showGreeting(message) {
-      message = JSON.parse(message)
-      var geoJsonData = message["geoJson"]
-      geoJsonData.features.forEach(function(marker) {
-        var el = document.createElement('div');
-        el.className = 'marker';
-        new mapboxgl.Marker(el)
-          .setLngLat(marker.geometry.coordinates)
-          .setPopup(new mapboxgl.Popup({
-              offset: 25
-            }) // add popups
-            .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-          .addTo(map);
-        map.on('mouseleave', 'places', function() {
-          map.getCanvas().style.cursor = '';
-          popup.remove();
-        });
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+        center: [-96, 37.8],
+        zoom: 3 // starting zoom
+      });
+      var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
       });
 
-    }
-
-    //create a layer which will parse and display the users/location
-    
-
-    var geolocate = new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true
-      },
-      trackUserLocation: true
-    });
-
-
-    map.addControl(geolocate);
-    var draw = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-            polygon: true,
-            trash: true
-        }
-    });
-    map.addControl(draw);
-    map.on('draw.create', updateArea);
-
-    function updateArea(e) {
-        var data = draw.getAll();
-        var coords = turf.meta.coordAll(draw);
-        var area = turf.area(d);
-        console.log(coords)
-        }
-
-
-    function connect() {
-      var socket = new SockJS('/livesocial-sock');
-      stompClient = Stomp.over(socket);
-      stompClient.connect({}, function(frame) {
-        //setConnected(true);
-        console.log('Connected1: ' + frame);
-        stompClient.subscribe('/topic/user', function(greeting) {
-          showGreeting((greeting.body));
-        });
-      });
-    }
-    function addMarker(){
-        map.on('contextmenu', function addM(e1) {
+      function showGreeting(message) {
+        message = JSON.parse(message)
+        var geoJsonData = message["geoJson"]
+        if (geoJsonData["features"][0]["geometry"]["type"] == "Point") {
+          geoJsonData.features.forEach(function(marker) {
             var el = document.createElement('div');
             el.className = 'marker';
-            var mark1 = new mapboxgl.Marker(el)
-                .setLngLat(e1.lngLat)
-                .addTo(map);
-            ee1 = e1.lngLat
-            map.off('contextmenu', addM);
-            document.getElementById("form-style-6").style.display = "block";
-            //document.getElementById("form-style-6").style.visibility = "visible"
-        });
-    }
-    var ee1 = null;
-    geolocate.on('geolocate', function geo1(e) {
-      console.log(e)
-      coordinates2 = e.coords.longitude
-      coordinates1 = e.coords.latitude
-      connect();
-      addMarker();
-      
-    });
-
-
-
-    function sendEventDetails() {
-      stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
-        'user_name': $("#name1").val(),
-        'event_name': $("#name2").val(),
-        'event_description': $("#details1").val(),
-        'start_time': $("#starttime1").val(),
-        'end_time': $("#endtime1").val(),
-        'vote': document.querySelector('input[name="vote"]:checked').value,
-        'geoJson': {
-          "type": "FeatureCollection",
-          'features': [{
-            "type": "Feature",
-            "properties": {
-              "title":$("#name2").val(),
-              "description": $("#details1").val()
-            },
-            "geometry": {
-              "type": "Point",
-              "coordinates": [ee1.lng, ee1.lat]
-            }
-          }]
+            new mapboxgl.Marker(el)
+              .setLngLat(marker.geometry.coordinates[0])
+              .setPopup(new mapboxgl.Popup({
+                  offset: 25
+                }) // add popups
+                .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+              .addTo(map);
+            map.on('mouseleave', 'places', function() {
+              map.getCanvas().style.cursor = '';
+              popup.remove();
+            });
+          });
         }
-      }));
-    }
-    $(function() {
-      $("form").on('submit', function(e) {
-        e.preventDefault();
+        else if(geoJsonData["features"][0]["geometry"]["type"] == "Polygon"){
+          //Add polygon heatmap
+
+          c
+        }
+
+      }
+
+      //create a layer which will parse and display the users/location
+
+
+      var geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true
       });
-      $("#sub1").click(function() {
-        sendEventDetails();
-        $("form")[0].reset()
-        document.getElementById("form-style-6").style.display = "none";
+
+
+      map.addControl(geolocate);
+      var draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true
+        }
+      });
+      map.addControl(draw);
+
+      var polygonCoordinates = null;
+
+      function addPolygon() {
+        map.on('draw.create', drawPolygon);
+        //map.on('draw.delete', updateArea);
+        //map.on('draw.update', updateArea);
+
+        function drawPolygon(e) {
+          var data = draw.getAll();
+          polygonCoordinates = data["features"][0]["geometry"]["coordinates"][0];
+          if (data.features.length > 0) {
+            document.getElementById("form-style-7").style.display = "block";
+            var area = turf.area(data);
+          }
+        }
+      }
+
+      function connect() {
+        var socket = new SockJS('/livesocial-sock');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+          //setConnected(true);
+          console.log('Connected1: ' + frame);
+          stompClient.subscribe('/topic/user', function(greeting) {
+            showGreeting((greeting.body));
+          });
+        });
+      }
+
+      function addMarker() {
+        map.on('contextmenu', function addM(e1) {
+          var el = document.createElement('div');
+          el.className = 'marker';
+          var mark1 = new mapboxgl.Marker(el)
+            .setLngLat(e1.lngLat)
+            .addTo(map);
+          ee1 = e1.lngLat
+          map.off('contextmenu', addM);
+          document.getElementById("form-style-6").style.display = "block";
+          //document.getElementById("form-style-6").style.visibility = "visible"
+        });
+      }
+      var ee1 = null;
+      geolocate.on('geolocate', function geo1(e) {
+        console.log(e)
+        coordinates2 = e.coords.longitude
+        coordinates1 = e.coords.latitude
+        connect();
         addMarker();
+        addPolygon();
+
       });
-    });
-    map.on('mouseenter', function() {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    var uuid = guid();
-  </script>
+
+
+
+      function sendEventDetails() {
+        stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+          'user_name': $("#name1").val(),
+          'event_name': $("#name2").val(),
+          'event_description': $("#details1").val(),
+          'start_time': $("#starttime1").val(),
+          'end_time': $("#endtime1").val(),
+          'vote': document.querySelector('input[name="vote"]:checked').value,
+          'geoJson': {
+            "type": "FeatureCollection",
+            'features': [{
+              "type": "Feature",
+              "properties": {
+                "title": $("#name2").val(),
+                "description": $("#details1").val()
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  [ee1.lng, ee1.lat]
+                ]
+              }
+            }]
+          }
+        }));
+      }
+
+      function sendAlertDetails() {
+        stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+          'user_name': $("#alert-name1").val(),
+          'event_name': $("#alert-name2").val(),
+          'event_description': $("#alert-name2").val(),
+          'vote': document.querySelector('input[name="alert-vote"]:checked').value,
+          'geoJson': {
+            "type": "FeatureCollection",
+            'features': [{
+              "type": "Feature",
+              "properties": {
+                "title": $("#alert-name2").val(),
+                "description": $("#alert-name2").val()
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": polygonCoordinates
+              }
+            }]
+          }
+        }));
+      }
+
+      $(function() {
+        $("form").on('submit', function(e) {
+          e.preventDefault();
+        });
+        $("#sub1").click(function() {
+          sendEventDetails();
+          $("form")[0].reset()
+          document.getElementById("form-style-6").style.display = "none";
+          addMarker();
+        });
+      });
+      $(function() {
+        $("form").on('submit', function(e) {
+          e.preventDefault();
+        });
+        $("#alert-submit").click(function() {
+          sendAlertDetails();
+          $("form.alert-form")[0].reset()
+          document.getElementById("form-style-7").style.display = "none";
+          addPolygon();
+        });
+      });
+
+      map.on('mouseenter', function() {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      var uuid = guid();
+    </script>
 </body>
 
 </html>

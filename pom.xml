@@ -94,10 +94,7 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple.wso2/json-simple -->
-        <!-- https://mvnrepository.com/artifact/org.geotools/gt-geojson -->
 
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>

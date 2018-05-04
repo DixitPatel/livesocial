@@ -1,7 +1,6 @@
 package com.bigdata.livesocial.kafka;
 
 import com.bigdata.livesocial.kafka_common.consumer.UserConsumer;
-import com.bigdata.livesocial.model.Coordinate;
 import com.bigdata.livesocial.kafka_common.producer.UserProducer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,10 +32,6 @@ public class TestKafka {
 
     @Test
     public void testReceive() throws Exception {
-        Coordinate c =new Coordinate();
-        c.setX(10);
-        c.setY(10);
-        //producer.sendToKafka(c);
         consumer.getLatch().await(10, TimeUnit.SECONDS);
         assertThat(consumer.getLatch().getCount()).isEqualTo(0);
     }
