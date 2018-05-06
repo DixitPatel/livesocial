@@ -226,13 +226,14 @@
                 + Math.abs(seconds) + "s "
 
               if (hours == 0 && minutes == 0 && seconds == 0) {
-                sendExpiryDetails(message);
                 clearInterval(x);
                 document.getElementById("event-time#" + message.event_id).innerHTML = "EVENT EXPIRED!";
+                sendExpiryDetails(message);
+                event_marker.remove();
+                //document.getElementsByClassName("marker.mapboxgl-marker").style.display = "none";
+                clearInterval(x);
                 //map.removeLayer(event_marker);
-                $("#event-time#" + message.event_id).remove()
-                //document.getElementById("status").innerHTML = "True";
-                //sendExpiryDetails(message);
+                //$("#event-time#" + message.event_id).remove()
               }
 
             }
@@ -350,6 +351,7 @@
           map.off('contextmenu', addM);
           document.getElementById("form-style-6").style.display = "block";
           guid();
+          mark1.remove();
           //document.getElementById("form-style-6").style.visibility = "visible"
         });
       }
