@@ -22,13 +22,14 @@ public class EventDetailsPojo {
     private String vote;
     private GeoJsonPojo geoJson;
     private String status;
+    private String topic;
 
-    public String getEvent_id() {
-        return event_id;
+    public String getUser_name() {
+        return user_name;
     }
 
-    public void setEvent_id(String event_id) {
-        this.event_id = event_id;
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
     public String getStatus() {
@@ -39,14 +40,21 @@ public class EventDetailsPojo {
         this.status = status;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
+    public String getEvent_id() {
+        return event_id;
+    }
+
+    public void setEvent_id(String event_id) {
+        this.event_id = event_id;
+    }
 
     public String getEvent_name() {
         return event_name;
