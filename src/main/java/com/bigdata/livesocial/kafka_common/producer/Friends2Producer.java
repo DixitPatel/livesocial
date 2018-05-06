@@ -11,16 +11,15 @@ import org.springframework.stereotype.Service;
 /**
  * @author Dixit Patel
  */
-
 @Service
-public class UserProducer {
+public class Friends2Producer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Friends2Producer.class);
 
     @Autowired
     private KafkaTemplate<String, EventDetailsPojo> kafkaTemplate;
 
-    @Value("${kafka.topic.user}")
+    @Value("${kafka.topic.friends2}")
     private String topic;
 
     public void sendToKafka(EventDetailsPojo event){
@@ -28,3 +27,4 @@ public class UserProducer {
         kafkaTemplate.send(topic,event);
     }
 }
+

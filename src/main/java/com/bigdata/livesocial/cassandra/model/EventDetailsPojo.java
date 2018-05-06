@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class EventDetailsPojo {
 
-    private UUID event_id;
+    private String event_id;
     private String event_name;
     private String user_name;
     private String event_description;
@@ -21,6 +21,23 @@ public class EventDetailsPojo {
     private Date end_time;
     private String vote;
     private GeoJsonPojo geoJson;
+    private String status;
+
+    public String getEvent_id() {
+        return event_id;
+    }
+
+    public void setEvent_id(String event_id) {
+        this.event_id = event_id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getUser_name() {
         return user_name;
@@ -30,13 +47,7 @@ public class EventDetailsPojo {
         this.user_name = user_name;
     }
 
-    public UUID getEventId() {
-        return event_id;
-    }
 
-    public void setEventId(UUID eventId) {
-        this.event_id = eventId;
-    }
     public String getEvent_name() {
         return event_name;
     }

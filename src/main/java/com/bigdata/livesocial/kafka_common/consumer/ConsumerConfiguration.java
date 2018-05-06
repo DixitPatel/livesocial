@@ -40,6 +40,7 @@ public class ConsumerConfiguration {
 
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,true);
+        //props.put(ConsumerConfig)
 
         return props;
     }
