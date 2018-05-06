@@ -340,6 +340,7 @@
         });
       }
 
+      
       function addMarker() {
         map.on('contextmenu', function addM(e1) {
           var el = document.createElement('div');
@@ -351,7 +352,7 @@
           map.off('contextmenu', addM);
           document.getElementById("form-style-6").style.display = "block";
           guid();
-          mark1.remove();
+          $("#sub1").click(function () {mark1.remove(); });
           //document.getElementById("form-style-6").style.visibility = "visible"
         });
       }
@@ -366,7 +367,6 @@
 
       });
 
-
       $(function () {
         $("form").on('submit', function (e) {
           e.preventDefault();
@@ -378,6 +378,7 @@
           addMarker();
         });
       });
+
       $(function () {
         $("form").on('submit', function (e) {
           e.preventDefault();
