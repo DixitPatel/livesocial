@@ -101,9 +101,9 @@
     //refactor this to 
     //function sendEventDetails(publish_topic)
     //
-    function sendEventDetails() {
+    function sendEventDetails(active_topic) {
 
-      stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+      stompClient.send("/livesocial/publish" + active_topic, {}, JSON.stringify({
         'user_name': $("#name1").val(),
         'event_name': $("#name2").val(),
         'event_description': $("#details1").val(),
@@ -111,6 +111,7 @@
         'end_time': $("#endtime1").val(),
         'vote': document.querySelector('input[name="vote"]:checked').value,
         'status': "False",
+        'topic': active_topic,
         'event_id': guid(),
         'geoJson': {
           "type": "FeatureCollection",
@@ -132,7 +133,7 @@
     }
 
     function sendExpiryDetails(message) {
-      stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+      stompClient.send("/livesocial/publish"+ message.topic, {}, JSON.stringify({
         'user_name': message.user_name,
         'event_name': message.event_name,
         'event_description': message.event_description,
@@ -141,6 +142,7 @@
         'vote': message.vote,
         'status': "True",
         'event_id': message.event_id,
+        'topic' : message.topic,
         'geoJson': {
           "type": "FeatureCollection",
           'features': [{
@@ -160,8 +162,8 @@
       }));
     }
 
-    function sendAlertDetails() {
-      stompClient.send("/livesocial/publishEvent", {}, JSON.stringify({
+    function sendAlertDetails(active_topic) {
+      stompClient.send("/livesocial/publish" + active_topic, {}, JSON.stringify({
         'user_name': $("#alert-name1").val(),
         'event_name': $("#alert-name2").val(),
         'event_description': $("#alert-name2").val(),
@@ -192,7 +194,8 @@
           geoJsonData.features.forEach(function (marker) {
             var el = document.createElement('div');
             el.className = 'marker';
-            el.setAttribute("id", "event-id#" + message.event_id);
+            el.setAttribute("id", "event-id-" + message.event_id);
+            el.setAttribute("topic", message.topic);
             //add topic with event id in div marker
 
             var event_marker = new mapboxgl.Marker(el)
@@ -226,6 +229,9 @@
               //hours = Math.abs(hours);
               //minutes = Math.abs(minutes);
               //seconds = Math.abs(seconds);
+              var p_exists = document.getElementById("event-time#" + message.event_id);
+              if (p_exists !== null && hours<=0 && minutes <= 0 && seconds <= 0) {
+                          
               document.getElementById("event-time#" + message.event_id).innerHTML = Math.abs(hours) + "h "
                 + Math.abs(minutes) + "m "
                 + Math.abs(seconds) + "s "
@@ -240,7 +246,7 @@
                 //map.removeLayer(event_marker);
                 //$("#event-time#" + message.event_id).remove()
               }
-
+            }
             }
 
           })
@@ -396,7 +402,9 @@
         //determine what button is clicked 
         //if none is selected use default publish_topic=/publishCommonEvent
         //sendEventDetails(publish_topic)
-        sendEventDetails();
+        //var active_topic = document.getElementsByClassName("active").innerHTML;
+        var active_topic = "CommunityEvent";
+        sendEventDetails(active_topic);
         $("form")[0].reset()
         document.getElementById("form-style-6").style.display = "none";
         addMarker();
@@ -408,7 +416,9 @@
         e.preventDefault();
       });
       $("#alert-submit").click(function () {
-        sendAlertDetails();
+        var active_topic = document.getElementsByClassName("active").innerHTML;
+
+        sendAlertDetails(active_topic);
         $("form.alert-form")[0].reset()
         document.getElementById("form-style-7").style.display = "none";
         addPolygon();
