@@ -181,10 +181,9 @@
       }
 
       function showGreeting(message) {
-
         message = JSON.parse(message)
         var geoJsonData = message["geoJson"]
-        if (geoJsonData["features"][0]["geometry"]["type"] == "Point") {
+        if (geoJsonData["features"][0]["geometry"]["type"] == "Point" && message.status=="False" ) {
           geoJsonData.features.forEach(function (marker) {
             var el = document.createElement('div');
             el.className = 'marker';
@@ -201,7 +200,6 @@
                 '<label for="time">Ends in:</label>' + '<p id=event-time#' + message.event_id + '></p>'
               ))
               .addTo(map);
-
 
             var x = setInterval(countdown, 1000);
             function countdown() {
@@ -231,17 +229,18 @@
                 sendExpiryDetails(message);
                 clearInterval(x);
                 document.getElementById("event-time#" + message.event_id).innerHTML = "EVENT EXPIRED!";
-                document.getElementById("event-id#"+ message.event_id).style.display = "none";
-                
-
-
+                //map.removeLayer(event_marker);
+                $("#event-time#" + message.event_id).remove()
                 //document.getElementById("status").innerHTML = "True";
                 //sendExpiryDetails(message);
-                //add remove marker and  event logic here
-                //send event details with event expire flag 
               }
+
             }
+
           })
+        }
+        else if (geoJsonData["features"][0]["geometry"]["type"] == "Point" && message.status == "True"){
+          //add remove marker and  event logic here
         }
         else if (geoJsonData["features"][0]["geometry"]["type"] == "Polygon") {
           geoJsonData.features.forEach(function (marker) {
