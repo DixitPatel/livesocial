@@ -12,6 +12,9 @@
   <script src="/webjars/jquery/jquery.min.js"></script>
   <script src="/webjars/sockjs-client/sockjs.min.js"></script>
   <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </head>
 
@@ -98,7 +101,7 @@
       closeOnClick: false
     });
 
-    //refactor this to
+    //refactor this to 
     //function sendEventDetails(publish_topic)
     //
     function sendEventDetails(active_topic) {
@@ -132,7 +135,10 @@
       }));
     }
 
-    function sendExpiryDetails(message) {
+    function sendExpiryDetails(message,stat2) {
+      var stat="";
+      if (stat2 == "False"){stat = "False";}
+      else { stat = "True"; }
       stompClient.send("/livesocial/publish" + message.topic, {}, JSON.stringify({
         'user_name': message.user_name,
         'event_name': message.event_name,
@@ -140,7 +146,7 @@
         'start_time': message.start_time,
         'end_time': message.end_time,
         'vote': message.vote,
-        'status': "True",
+        'status': stat,
         'event_id': message.event_id,
         'topic': message.topic,
         'geoJson': {
@@ -187,9 +193,8 @@
         }
       }));
     }
-
     function showGreeting(message) {
-      message = JSON.parse(message)
+      //message = JSON.parse(message)
       var geoJsonData = message["geoJson"]
       if (geoJsonData["features"][0]["geometry"]["type"] == "Point") {
         if (message.status == "False") {
@@ -206,13 +211,17 @@
                 offset: 25
               }).setHTML('<h4>' + marker.properties.title + '</h4>' +
                 '<label for="desc">Description:</label>' + '<p>' + marker.properties.description + '</p>' +
-                '<label for="time">Time:</label>' + '<p>' + message.start_time + ' - ' + message.end_time + '</p>' +
-                '<label for="time">Ends in:</label>' + '<p id=event-time#' + message.event_id + '></p>'
-              ))
+                '<label for="time">Time:</label>' + '<p>' + message.start_time + '</p>'+ '-' + '<p id=endTime>' +message.end_time + '</p>' +
+                '<label for="time">Ends in:</label>' + '<p id=event-time#' + message.event_id + '></p>' +
+                '<button type="button" id="timer" class="btn btn-info">+5</button>'
+              )
+              )
               .addTo(map);
 
+            if (message.vote == "No") {
+              document.getElementById("timer").style.display = "none";
+            }
             var x = setInterval(countdown, 1000);
-
             function countdown() {
 
               // Get todays date and time
@@ -222,6 +231,26 @@
                 minute: "numeric",
                 second: "numeric"
               });
+              function updateTime(){
+                var updated_time = moment(message.end_time, 'HH:mm:ss').add(5, 'minutes').format('HH:mm');
+                message.end_time = updated_time;
+                sendExpiryDetails(message,"False");
+                clearInterval(x);
+                x=0;
+                event_marker.remove();
+                //$("#event-id-" + message.event_id).remove();
+                showGreeting(message);
+                
+                
+              }
+              var b_exists = document.getElementById("event-time#" + message.event_id);
+              if (b_exists !== null) {
+              document.getElementById("timer").onclick = updateTime;
+              document.getElementById("endTime").innerHTML = message.end_time;
+              }
+             // $("#timer").click(function () {
+
+              //})
               // Find the distance between now an the count down date
               var current_time = moment(now, 'HH:mm:ss');
               var event_end = moment(message.end_time, 'HH:mm:ss');
@@ -233,16 +262,16 @@
               //minutes = Math.abs(minutes);
               //seconds = Math.abs(seconds);
               var p_exists = document.getElementById("event-time#" + message.event_id);
-              if (p_exists !== null && hours <= 0 && minutes <= 0 && seconds <= 0) {
+              if (p_exists !== null) {
 
-                document.getElementById("event-time#" + message.event_id).innerHTML = Math.abs(hours) + "h " +
-                  Math.abs(minutes) + "m " +
-                  Math.abs(seconds) + "s "
+                document.getElementById("event-time#" + message.event_id).innerHTML = Math.abs(hours) + "h "
+                  + Math.abs(minutes) + "m "
+                  + Math.abs(seconds) + "s "
 
                 if (hours == 0 && minutes == 0 && seconds == 0) {
                   clearInterval(x);
                   document.getElementById("event-time#" + message.event_id).innerHTML = "EVENT EXPIRED!";
-                  sendExpiryDetails(message);
+                  sendExpiryDetails(message,"True");
                   event_marker.remove();
                   //document.getElementsByClassName("marker.mapboxgl-marker").style.display = "none";
                   clearInterval(x);
@@ -255,6 +284,7 @@
           })
         }
       } else if (geoJsonData["features"][0]["geometry"]["type"] == "Polygon") {
+        
         geoJsonData.features.forEach(function(marker) {
           map.addLayer({
             'id': message.event_id,
@@ -272,7 +302,7 @@
             'layout': {},
             'paint': {
               'fill-color': '#FF6347',
-              'fill-opacity': 0.4
+              'fill-opacity': 0.8
             }
           });
           map.on('click', message.event_id, function(e) {
@@ -283,6 +313,7 @@
                 marker.properties.description + '</p>')
               .addTo(map);
           });
+          
 
           // Change the cursor to a pointer when the mouse is over the states layer.
           map.on('mouseenter', message.event_id, function() {
@@ -292,14 +323,25 @@
           // Change it back to a pointer when it leaves.
           map.on('mouseleave', message.event_id, function() {
             map.getCanvas().style.cursor = '';
-          })
+          });
 
+          map.on('render', message.event_id, function () {
+           setInterval(function(){
+              colors = ['#f90303', '#033bf9', '#f9e303'];
+              var color = colors[Math.floor(Math.random() * colors.length)];
+              map.setPaintProperty(message.event_id, 'fill-color', color);},500)
+          });
 
         })
       }
     }
 
+  /*function animatePolygon(id) {
+    colors = ['#ad4547', '#1e66b7', '#bd8c11'];
+    var color = colors[Math.floor(Math.random() * items.length)];
+    map.setPaintProperty(id, ‘fill - color’, color);
 
+  }*/
 
     //create a layer which will parse and display the users/location
 
@@ -331,8 +373,8 @@
       var draw = getPolygonInstance()
       map.addControl(draw);
       map.on('draw.create', drawPolygon);
-      map.on('draw.delete', drawPolygon);
-      map.on('draw.update', drawPolygon);
+      //map.on('draw.update', drawPolygon);
+      
 
       function drawPolygon(e) {
         var data = draw.getAll();
@@ -357,16 +399,16 @@
       stClient.connect({}, function(frame) {
         //setConnected(true);
         stClient.subscribe('/topic/user', function(greeting) {
-          showGreeting((greeting.body));
+          showGreeting((JSON.parse(greeting.body)));
         });
         stClient.subscribe('/topic/community', function(greeting) {
-          showGreeting((greeting.body));
+          showGreeting((JSON.parse(greeting.body)));
         });
         stClient.subscribe('/topic/friends1', function(greeting) {
-          showGreeting((greeting.body));
+          showGreeting((JSON.parse(greeting.body)));
         });
         stClient.subscribe('/topic/friends2', function(greeting) {
-          showGreeting((greeting.body));
+          showGreeting((JSON.parse(greeting.body)));
         });
       });
     }
@@ -397,17 +439,11 @@
       coordinates2 = e.coords.longitude
       coordinates1 = e.coords.latitude
       connect();
-
-      //connectToWebSocket()
-      //topic_name="/topic/user"
-      //subscribeToTopic(topic_name)
-      //TEst until here
-
       addMarker();
     });
 
+    
     addToggler();
-
     //######### TOGGLER ###############
 
     function addToggler() {
@@ -463,7 +499,7 @@
 
     }
 
-
+  
     $(function() {
       $("form").on('submit', function(e) {
         e.preventDefault();
@@ -481,13 +517,11 @@
       });
     });
 
-
-    addPolygon();
-
     $(function() {
       $("form").on('submit', function(e) {
         e.preventDefault();
       });
+      addPolygon();
       $("#alert-submit").click(function() {
         var active_topic = getCheckedTopic();
         sendAlertDetails(active_topic);
