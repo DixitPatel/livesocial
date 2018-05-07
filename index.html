@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Pedestrian foot traffic at intersections</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
+    <style>
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    #locations {
+      position: absolute;
+    }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+    <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicmFqYXJzaGliYXNhayIsImEiOiJjamdiaXc0NWMxZWtrMzNvNDR4anY2MXZvIn0.NBeZxSyV97cy09LBH6KzRw'; // Put your Mapbox Public Access token here
+
+    // Load a new map in the 'map' HTML div
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/dark-v9',
+      center: [-79.3832, 43.6512],
+      zoom: 11
+    });
+
+    // Load the vector tile source from the Mapbox Pedestrian traffic example
+    var max = 34615;
+    var fifth = 34615 / 5;
+    var quantiles = [];
+    for (i = 0; i < 5; i++) {
+      var quantile = (fifth + i) * fifth;
+      quantiles.push(quantile);
+    }
+
+    map.on('load', function() {
+      // Add the circle layer to the map
+      map.addLayer({
+        id: 'pedestrian_volume',
+        type: 'circle',
+        source: {
+          type: 'vector',
+          url: 'mapbox://mapbox.dvrdhs7l' // Your Mapbox tileset Map ID
+        },
+        'source-layer': 'Signalized_Intersection_Traff-4ypaqa',
+        paint: {
+      'circle-color': '#D49A66',
+      // Add data-driven styles for circle radius
+      'circle-radius': {
+        property: '8HrPedVol',
+        type: 'exponential',
+        stops: [
+          [124, 2],
+          [34615, 10]
+        ]
+      },
+      'circle-opacity': 0.8
+    } // name of tilesets
+      });
+    });
+    </script>
+</body>
+
+</html>
