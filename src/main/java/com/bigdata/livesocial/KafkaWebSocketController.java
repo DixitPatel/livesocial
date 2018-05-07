@@ -80,7 +80,7 @@ public class KafkaWebSocketController {
         cassandraEvent.setCoordinates(message.getGeoJson().toString());
         cassandraEvent.setStartTime(message.getStart_time());
         cassandraEvent.setEndTime(message.getEnd_time());
-        UUID eventId = cassandraService.addEventDetails(cassandraEvent);
+        //UUID eventId = cassandraService.addEventDetails(cassandraEvent);
         LOG.info("Adding to Cassandra"+cassandraEvent.toString());
         userProducer.sendToKafka(message);
 

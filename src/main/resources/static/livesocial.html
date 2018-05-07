@@ -19,8 +19,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js" type="text/javascript"></script>
   <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
   <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
-  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'
-  />
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css' />
 
   <div id='map' class="w3-container">
     <div class="main-content">
@@ -68,10 +67,11 @@
           <input id="alert-submit" type="submit" />
         </form>
       </div>
+      <nav id='filter-group' class='filter-group'></nav>
     </div>
   </div>
   <script>
-    window.onload = function () {
+    window.onload = function() {
 
       document.getElementById("form-style-6").style.display = "none";
 
@@ -98,7 +98,7 @@
       closeOnClick: false
     });
 
-    //refactor this to 
+    //refactor this to
     //function sendEventDetails(publish_topic)
     //
     function sendEventDetails(active_topic) {
@@ -133,7 +133,7 @@
     }
 
     function sendExpiryDetails(message) {
-      stompClient.send("/livesocial/publish"+ message.topic, {}, JSON.stringify({
+      stompClient.send("/livesocial/publish" + message.topic, {}, JSON.stringify({
         'user_name': message.user_name,
         'event_name': message.event_name,
         'event_description': message.event_description,
@@ -142,7 +142,7 @@
         'vote': message.vote,
         'status': "True",
         'event_id': message.event_id,
-        'topic' : message.topic,
+        'topic': message.topic,
         'geoJson': {
           "type": "FeatureCollection",
           'features': [{
@@ -169,6 +169,8 @@
         'event_description': $("#alert-name2").val(),
         'vote': document.querySelector('input[name="alert-vote"]:checked').value,
         'event_id': guid(),
+        'status': "True",
+        'topic': active_topic,
         'geoJson': {
           "type": "FeatureCollection",
           'features': [{
@@ -191,7 +193,7 @@
       var geoJsonData = message["geoJson"]
       if (geoJsonData["features"][0]["geometry"]["type"] == "Point") {
         if (message.status == "False") {
-          geoJsonData.features.forEach(function (marker) {
+          geoJsonData.features.forEach(function(marker) {
             var el = document.createElement('div');
             el.className = 'marker';
             el.setAttribute("id", "event-id-" + message.event_id);
@@ -210,6 +212,7 @@
               .addTo(map);
 
             var x = setInterval(countdown, 1000);
+
             function countdown() {
 
               // Get todays date and time
@@ -230,30 +233,29 @@
               //minutes = Math.abs(minutes);
               //seconds = Math.abs(seconds);
               var p_exists = document.getElementById("event-time#" + message.event_id);
-              if (p_exists !== null && hours<=0 && minutes <= 0 && seconds <= 0) {
-                          
-              document.getElementById("event-time#" + message.event_id).innerHTML = Math.abs(hours) + "h "
-                + Math.abs(minutes) + "m "
-                + Math.abs(seconds) + "s "
+              if (p_exists !== null && hours <= 0 && minutes <= 0 && seconds <= 0) {
 
-              if (hours == 0 && minutes == 0 && seconds == 0) {
-                clearInterval(x);
-                document.getElementById("event-time#" + message.event_id).innerHTML = "EVENT EXPIRED!";
-                sendExpiryDetails(message);
-                event_marker.remove();
-                //document.getElementsByClassName("marker.mapboxgl-marker").style.display = "none";
-                clearInterval(x);
-                //map.removeLayer(event_marker);
-                //$("#event-time#" + message.event_id).remove()
+                document.getElementById("event-time#" + message.event_id).innerHTML = Math.abs(hours) + "h " +
+                  Math.abs(minutes) + "m " +
+                  Math.abs(seconds) + "s "
+
+                if (hours == 0 && minutes == 0 && seconds == 0) {
+                  clearInterval(x);
+                  document.getElementById("event-time#" + message.event_id).innerHTML = "EVENT EXPIRED!";
+                  sendExpiryDetails(message);
+                  event_marker.remove();
+                  //document.getElementsByClassName("marker.mapboxgl-marker").style.display = "none";
+                  clearInterval(x);
+                  //map.removeLayer(event_marker);
+                  //$("#event-time#" + message.event_id).remove()
+                }
               }
-            }
             }
 
           })
         }
-      }
-      else if (geoJsonData["features"][0]["geometry"]["type"] == "Polygon") {
-        geoJsonData.features.forEach(function (marker) {
+      } else if (geoJsonData["features"][0]["geometry"]["type"] == "Polygon") {
+        geoJsonData.features.forEach(function(marker) {
           map.addLayer({
             'id': message.event_id,
             'type': 'fill',
@@ -273,7 +275,7 @@
               'fill-opacity': 0.4
             }
           });
-          map.on('click', message.event_id, function (e) {
+          map.on('click', message.event_id, function(e) {
             new mapboxgl.Popup()
               .setLngLat(e.lngLat)
               .setHTML('<h4>' + marker.properties.title + '</h4>' +
@@ -283,12 +285,12 @@
           });
 
           // Change the cursor to a pointer when the mouse is over the states layer.
-          map.on('mouseenter', message.event_id, function () {
+          map.on('mouseenter', message.event_id, function() {
             map.getCanvas().style.cursor = 'pointer';
           });
 
           // Change it back to a pointer when it leaves.
-          map.on('mouseleave', message.event_id, function () {
+          map.on('mouseleave', message.event_id, function() {
             map.getCanvas().style.cursor = '';
           })
 
@@ -311,21 +313,26 @@
 
 
     map.addControl(geolocate);
-    var draw = new MapboxDraw({
-      displayControlsDefault: false,
-      controls: {
-        polygon: true,
-        trash: true
-      }
-    });
-    map.addControl(draw);
+
+    //############ POLYGON #####################
+    function getPolygonInstance() {
+      return new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true
+        }
+      });
+    }
 
     var polygonCoordinates = null;
 
     function addPolygon() {
+      var draw = getPolygonInstance()
+      map.addControl(draw);
       map.on('draw.create', drawPolygon);
-      //map.on('draw.delete', updateArea);
-      //map.on('draw.update', updateArea);
+      map.on('draw.delete', drawPolygon);
+      map.on('draw.update', drawPolygon);
 
       function drawPolygon(e) {
         var data = draw.getAll();
@@ -334,28 +341,31 @@
           document.getElementById("form-style-7").style.display = "block";
           var area = turf.area(data);
         }
+
       }
     }
+    //############ POLYGON #####################
 
-    function createSocket(){
+    function createSocket() {
       var socket = new SockJS('/livesocial-sock');
       stompClient = Stomp.over(socket);
       return stompClient;
     }
+
     function connect() {
       stClient = createSocket();
-      stClient.connect({}, function (frame) {
+      stClient.connect({}, function(frame) {
         //setConnected(true);
-        stClient.subscribe('/topic/user', function (greeting) {
+        stClient.subscribe('/topic/user', function(greeting) {
           showGreeting((greeting.body));
         });
-        stClient.subscribe('/topic/community', function (greeting) {
+        stClient.subscribe('/topic/community', function(greeting) {
           showGreeting((greeting.body));
         });
-        stClient.subscribe('/topic/friends1', function (greeting) {
+        stClient.subscribe('/topic/friends1', function(greeting) {
           showGreeting((greeting.body));
         });
-        stClient.subscribe('/topic/friends2', function (greeting) {
+        stClient.subscribe('/topic/friends2', function(greeting) {
           showGreeting((greeting.body));
         });
       });
@@ -373,11 +383,15 @@
         map.off('contextmenu', addM);
         document.getElementById("form-style-6").style.display = "block";
         guid();
-        $("#sub1").click(function () { mark1.remove(); });
+        $("#sub1").click(function() {
+          mark1.remove();
+        });
         //document.getElementById("form-style-6").style.visibility = "visible"
       });
     }
     var ee1 = null;
+    var topic_list = ['CommonEvent', 'CommunityEvent', 'Friends1Event', 'Friends2Event']
+
     geolocate.on('geolocate', function geo1(e) {
       console.log(e)
       coordinates2 = e.coords.longitude
@@ -390,20 +404,76 @@
       //TEst until here
 
       addMarker();
-      addPolygon();
-
     });
 
-    $(function () {
-      $("form").on('submit', function (e) {
+    addToggler();
+
+    //######### TOGGLER ###############
+
+    function addToggler() {
+      var filterGroup = document.getElementById('filter-group');
+      var topic_label_map = new Map()
+      topic_label_map.set('CommonEvent', 'All Events');
+      topic_label_map.set('CommunityEvent', 'Boulder Community');
+      topic_label_map.set('Friends1Event', 'Kerbalians');
+      topic_label_map.set('Friends2Event', 'GOT Friends');
+      for (i = 0; i < topic_list.length; i++) {
+        topic = topic_list[i];
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.id = topic;
+        input.checked = (topic == "CommonEvent" ? true : false);
+        filterGroup.appendChild(input);
+
+        var label = document.createElement('label');
+        label.setAttribute('for', topic);
+        label.textContent = topic_label_map.get(topic);
+        filterGroup.appendChild(label);
+
+        input.addEventListener('click', function(e) {
+          hideUnhideLayersExcept();
+        });
+      }
+    }
+
+    function hideUnhideLayersExcept() {
+      topic = getCheckedTopic();
+
+      if (topic == "CommonEvent") {
+        $("div[id^=event-id-").toggle(true)
+      } else {
+        $("div[id^=event-id-").each(function() {
+          if (!(topic == $(this).attr('topic'))) {
+            $(this).toggle(false);
+          } else {
+            $(this).toggle(true);
+          }
+        });
+      }
+    }
+
+    //######### TOGGLER ###############
+
+    function getCheckedTopic() {
+      for (var i = 0; i < topic_list.length; i++) {
+        if (document.getElementById(topic_list[i]).checked) {
+          return topic_list[i]
+        }
+      }
+
+    }
+
+
+    $(function() {
+      $("form").on('submit', function(e) {
         e.preventDefault();
       });
-      $("#sub1").click(function () {
-        //determine what button is clicked 
+      $("#sub1").click(function() {
+        //determine what button is clicked
         //if none is selected use default publish_topic=/publishCommonEvent
         //sendEventDetails(publish_topic)
-        //var active_topic = document.getElementsByClassName("active").innerHTML;
-        var active_topic = "CommunityEvent";
+        var active_topic = getCheckedTopic();
+        //var active_topic = "CommonEvent";
         sendEventDetails(active_topic);
         $("form")[0].reset()
         document.getElementById("form-style-6").style.display = "none";
@@ -411,21 +481,23 @@
       });
     });
 
-    $(function () {
-      $("form").on('submit', function (e) {
+
+    addPolygon();
+
+    $(function() {
+      $("form").on('submit', function(e) {
         e.preventDefault();
       });
-      $("#alert-submit").click(function () {
-        var active_topic = document.getElementsByClassName("active").innerHTML;
-
+      $("#alert-submit").click(function() {
+        var active_topic = getCheckedTopic();
         sendAlertDetails(active_topic);
         $("form.alert-form")[0].reset()
         document.getElementById("form-style-7").style.display = "none";
-        addPolygon();
+        //addPolygon();
       });
     });
 
-    map.on('mouseenter', function () {
+    map.on('mouseenter', function() {
       map.getCanvas().style.cursor = 'pointer';
     });
     var uuid = guid();
