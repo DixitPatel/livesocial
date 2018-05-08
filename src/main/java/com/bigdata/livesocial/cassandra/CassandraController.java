@@ -1,4 +1,4 @@
-package com.bigdata.livesocial;
+package com.bigdata.livesocial.cassandra;
 
 import com.bigdata.livesocial.cassandra.CassandraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class CassandraController {
 
   //  @Autowired
   //  CassandraService cassandraService;
-
+  //NOT Using this really
 
     @RequestMapping(method = RequestMethod.POST, value = "/test")
     String test() {

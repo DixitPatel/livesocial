@@ -51,11 +51,13 @@ body {
 .mapboxgl-popup {
   max-width: 350px;
   max-height: 400px;
+
 }
 
 .mapboxgl-popup-content {
   text-align: center;
   font-family: 'Open Sans', sans-serif;
+  background: #b5bee0
 }
 
 .hidden {
@@ -64,7 +66,13 @@ body {
   width: 0px;
   height: 0px;
 }
+/* animation */
 
+@keyframes example {
+    from {background-color: red;}
+    to {background-color: blue;}
+    to {background-color: yellow;}
+}
 .form-style-6 {
   font: 95% Arial, Helvetica, sans-serif;
   max-width: 98%;

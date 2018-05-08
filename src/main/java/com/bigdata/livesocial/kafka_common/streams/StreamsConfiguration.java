@@ -1,4 +1,3 @@
-/*
 package com.bigdata.livesocial.kafka_common.streams;
 
 import com.bigdata.livesocial.cassandra.model.EventDetailsPojo;
@@ -26,10 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-*/
 /**
  * @author Dixit Patel
- *//*
+*/
 
 
 @EnableKafka
@@ -43,16 +41,14 @@ public class StreamsConfiguration {
     @Value("${spring.kafka.topic.user}")
     private String kafkaTopicUser;
 
-    @Autowired
-    private StreamsBuilderFactoryBean myKStreamBuilderFactoryBean;
 
     @Bean
-    public StreamsConfig streamsConfig() {
+    public StreamsConfig defaultKafkaStreamsConfig() {
         Map<String, Object> props = new HashMap<>();
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-livesocial");
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, new JsonSerde<>(EventDetailsPojo.class));
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, new JsonSerde<>(EventDetailsPojo.class));
+        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, new JsonSerde<>(EventDetailsPojo.class).getClass());
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, new JsonSerde<>(EventDetailsPojo.class).getClass());
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return new StreamsConfig(props);
     }
@@ -66,28 +62,16 @@ public class StreamsConfiguration {
     public KStream<EventDetailsPojo, EventDetailsPojo> eventStream(StreamsBuilder kStreamBuilder) {
         KStream<EventDetailsPojo, EventDetailsPojo> eventStream = kStreamBuilder.stream(kafkaTopicUser);
 
-        */
-/*stream
-                .mapValues(String::toUpperCase)
-                .groupByKey()
-                .reduce((String value1, String value2) -> value1 + value2,
-                        TimeWindows.of(1000),
-                        "windowStore")
-                .toStream()
-                .map((windowedId, value) -> new KeyValue<>(windowedId.key(), value))
-                .filter((i, s) -> s.length() > 40)
-                .to("streamingTopic2");
 
-        stream.print();*//*
+        //Status False = expired
+        eventStream.map((key,value)-> KeyValue.pair(value.getEvent_id(),value))
+                    .filter((key,value)->(value.getStatus()!="False")).to(kafkaTopicUser);
 
-        KStream<String, EventDetailsPojo> t = eventStream.map((key,value)-> KeyValue.pair(value.getEvent_id(),value))
-                    .filter((key,value)->(value.getStatus()!="False"));
-
-
-        //KTable<String, EventDetailsPojo> eventsTable =
+       /* KStream<String, EventDetailsPojo> stream2 = eventStream.map((key,value)-> KeyValue.pair(value.getEvent_id(),value))
+                .filter((key,value)->(value.getStatus()!="True"));*/
+        KTable<String, EventDetailsPojo> eventsTable = kStreamBuilder.table(kafkaTopicUser);
         return eventStream;
     }
 
 
 }
-*/
