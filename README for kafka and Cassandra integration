@@ -33,7 +33,7 @@ This will start the data mountaineer class and we can run topics that we want to
 Start Kafka     :  bin/kafka-server-start.sh config/server.properties
 Start Zookeeper :  bin/zookeeper-server-start.sh config/zookeeper.properties
 Create Topic
- user           :  bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic user
+ user           :  bin/1-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic user
  community      :  bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic community
  friends1       :  bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic friends1
  friends2       :  bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic friends2

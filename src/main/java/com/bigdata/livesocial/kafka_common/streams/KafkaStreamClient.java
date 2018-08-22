@@ -1,3 +1,4 @@
+/*
 package com.bigdata.livesocial.kafka_common.streams;
 
 import com.bigdata.livesocial.cassandra.model.EventDetailsPojo;
@@ -9,9 +10,11 @@ import org.springframework.kafka.core.StreamsBuilderFactoryBean;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.stereotype.Service;
 
+*/
 /**
  * @author Dixit Patel
- */
+ *//*
+
 
 
 @Service
@@ -28,3 +31,4 @@ public class KafkaStreamClient {
 
     }
 }
+*/

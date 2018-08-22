@@ -1,3 +1,4 @@
+/*
 package com.bigdata.livesocial.kafka_common.streams;
 
 import com.bigdata.livesocial.cassandra.model.EventDetailsPojo;
@@ -25,9 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+*/
 /**
  * @author Dixit Patel
-*/
+*//*
+
 
 
 @EnableKafka
@@ -67,11 +70,14 @@ public class StreamsConfiguration {
         eventStream.map((key,value)-> KeyValue.pair(value.getEvent_id(),value))
                     .filter((key,value)->(value.getStatus()!="False")).to(kafkaTopicUser);
 
-       /* KStream<String, EventDetailsPojo> stream2 = eventStream.map((key,value)-> KeyValue.pair(value.getEvent_id(),value))
-                .filter((key,value)->(value.getStatus()!="True"));*/
+       */
+/* KStream<String, EventDetailsPojo> stream2 = eventStream.map((key,value)-> KeyValue.pair(value.getEvent_id(),value))
+                .filter((key,value)->(value.getStatus()!="True"));*//*
+
         KTable<String, EventDetailsPojo> eventsTable = kStreamBuilder.table(kafkaTopicUser);
         return eventStream;
     }
 
 
 }
+*/

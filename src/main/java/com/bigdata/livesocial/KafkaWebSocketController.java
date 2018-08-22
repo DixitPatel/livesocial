@@ -45,6 +45,8 @@ public class KafkaWebSocketController {
     private CommunityProducer communityProducer;
 
 
+    //Better name please ?
+
     @Autowired
     private Friends1Producer friends1Producer;
 

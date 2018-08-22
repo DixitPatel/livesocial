@@ -17,7 +17,6 @@ public class CassandraController {
 
   //  @Autowired
   //  CassandraService cassandraService;
-  //NOT Using this really
 
     @RequestMapping(method = RequestMethod.POST, value = "/test")
     String test() {
